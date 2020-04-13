@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Models;
 
 namespace Webshop.Data
@@ -10,10 +12,68 @@ namespace Webshop.Data
         {
         }
 
-        
+        public static byte[] ReadFile(string sPath)
+        {
+            //Initialize byte array with a null value initially.
+            byte[] data = null;
+
+            //Use FileInfo object to get file size.
+            FileInfo fInfo = new FileInfo(sPath);
+            long numBytes = fInfo.Length;
+
+            //Open FileStream to read file
+            FileStream fStream = new FileStream(sPath, FileMode.Open, FileAccess.Read);
+
+            //Use BinaryReader to read file stream into byte array.
+            BinaryReader br = new BinaryReader(fStream);
+
+            //When you use BinaryReader, you need to supply number of bytes 
+            //to read from file.
+            //In this case we want to read entire file. 
+            //So supplying total number of bytes.
+            data = br.ReadBytes((int)numBytes);
+
+            return data;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<OrderItem>()
+
+            modelBuilder.Entity<Product>().HasData(
+
+                new Product
+                {
+                    Name = "airJordans",
+                    Price = 100,
+                    Image = ReadFile("Images/airJordans.jpg"),
+                    Description = "Fly high like Michael",
+                    Category = "sport",
+                    CreatedAt = DateTime.Today
+                },
+
+                  new Product
+                  {
+                      Name = "Nike Mercurial Vapor",
+                      Price = 100,
+                      Image = ReadFile("Images/NikeMercurialVapor.jpg"),
+                      Description = "Play Ball like Messi",
+                      Category = "sport",
+                      CreatedAt = DateTime.Today
+                  },
+                    new Product
+                    {
+                        Name = "Nike Air Zoom",
+                        Price = 100,
+                        Image = ReadFile("Images/NikeAirZoom.jpg"),
+                        Description = "Best running shoe ever",
+                        Category = "sport",
+                        CreatedAt = DateTime.Today
+                    }
+            );
+
+
+
+modelBuilder.Entity<OrderItem>()
                 .HasKey(oi => new { oi.OrderId, oi.ProductId });
             modelBuilder.Entity<Review>()
                  .HasKey(r => new { r.UserId, r.ProductId });
