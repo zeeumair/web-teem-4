@@ -5,6 +5,7 @@ namespace Webshop.Models
 {
     public class Order
     {
+        public int Id { get; set; }
         public virtual User User { get; set; }
 
         public string PaymentOption { get; set; }
