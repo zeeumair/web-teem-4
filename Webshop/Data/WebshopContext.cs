@@ -10,6 +10,17 @@ namespace Webshop.Data
         {
         }
 
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(oi => new { oi.OrderId, oi.ProductId });
+            modelBuilder.Entity<Review>()
+                 .HasKey(r => new { r.UserId, r.ProductId });
+            base.OnModelCreating(modelBuilder);
+        }
+        
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Order> Orders { get; set; }

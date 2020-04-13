@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Webshop.Models
 {
@@ -6,7 +9,6 @@ namespace Webshop.Models
     {
         public int Id { get; set; }
         public virtual User User { get; set; }
-
         public string PaymentOption { get; set; }
         public Double TotalAmount { get; set; }
         public string DeliveryOption { get; set; }
