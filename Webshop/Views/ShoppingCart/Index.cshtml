@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Index";
 }
+
+@ViewBag.listOfOrderItems
+
 <table class="table">
     <thead>
         <tr>
@@ -16,25 +19,28 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.Name)
-            </td>
-            <td>
-                <form asp-action="IncrementProductQuantity" method="post">
-                    <input type="hidden" name="id" value="@item.OrderId" />
-                    <input type="hidden" name="idPart" value="@item.ProductId" />
-                    <input type="submit" value="Add" class="btn btn-success" />
-                </form>
-                @Html.DisplayFor(modelItem => item.Quantity)
-                <form asp-action="DecrementProductQuantity" method="post">
-                    <input type="hidden" name="id" value="@item.OrderId" />
-                    <input type="hidden" name="idPart" value="@item.ProductId" />
-                    <input type="submit" value="Remove" class="btn btn-danger" />
-                </form>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td>
+                    <form asp-action="IncrementProductQuantity" method="post">
+                        <input type="hidden" name="id" value="@item.OrderId" />
+                        <input type="hidden" name="idPart" value="@item.ProductId" />
+                        <input type="submit" value="Add" class="btn btn-success" />
+                    </form>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                    <form asp-action="DecrementProductQuantity" method="post">
+                        <input type="hidden" name="id" value="@item.OrderId" />
+                        <input type="hidden" name="idPart" value="@item.ProductId" />
+                        <input type="submit" value="Remove" class="btn btn-danger" />
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { products = ViewBag.listOfOrderItems}, null)
