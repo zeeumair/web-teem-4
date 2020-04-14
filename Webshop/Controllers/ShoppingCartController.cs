@@ -23,9 +23,11 @@ namespace Webshop.Controllers
         {
             var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
 
-            ViewBag.ListOfOrderItems = webshopContext.ToListAsync(); 
+           var orderItems = await webshopContext.ToListAsync();
+
+            ViewBag.ListOfOrderItems = orderItems;
             
-            return View(await webshopContext.ToListAsync());
+                return View(orderItems);
         }
 
         [HttpPost]
