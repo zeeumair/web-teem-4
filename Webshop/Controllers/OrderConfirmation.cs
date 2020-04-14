@@ -36,34 +36,46 @@ namespace Webshop.Controllers
             ViewBag.productId = productId;
             ViewBag.orderId = orderId;
             ViewBag.orderItemId = orderItemId;
+            ViewBag.quantity = quantity; 
 
             return View();
         }
 
     
 
-        public async Task<IActionResult> Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId)
+        public ActionResult Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId, string quantity)
         {
-
             List<Product> products = new List<Product>();
+            var orderItemContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
+
+      
+
+
+            foreach (var item in orderItemContext.ToList())
+            {
+                products.Add(item.Product);
+ 
+                
+            }
 
             var orderContext = _context.Orders.Find(Int32.Parse(orderItemId));
             orderContext.Confirmed = true; 
-            await _context.SaveChangesAsync();
+             _context.SaveChangesAsync();
 
-            var orderItemContext = _context.OrderItems.Find(Int32.Parse(orderItemId), Int32.Parse(orderId));
-
-            products.Add(orderItemContext.Product); 
-
-            ViewBag.products = products;
-            ViewBag.delivery = deliveryTime;
-            ViewBag.totalPrice = totalPrice;
             ViewBag.orderConfirmationNumber = orderContext.Id;
+            ViewBag.delivery = deliveryTime;
+            ViewBag.paymentType = paymentType; 
+            ViewBag.totalPrice = totalPrice;
+            ViewBag.productId = productId;
+            ViewBag.orderId = orderId;
+            ViewBag.quantity = quantity;
+            ViewBag.orderItemId = orderItemId;
+
 
 
 
             return View(products);
-        }
+        }  
     }
 }
 
