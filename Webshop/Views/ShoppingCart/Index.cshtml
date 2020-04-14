@@ -4,8 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-@ViewBag.listOfOrderItems
-
 <table class="table">
     <thead>
         <tr>
@@ -23,19 +21,20 @@
         {
             <tr>
                 <td>
+                    <img src="@item.Product.Image" />
                     @Html.DisplayFor(modelItem => item.Product.Name)
                 </td>
                 <td>
-                    <form asp-action="IncrementProductQuantity" method="post">
+                    <form class="float-left" asp-action="IncrementProductQuantity" method="post">
                         <input type="hidden" name="id" value="@item.OrderId" />
                         <input type="hidden" name="idPart" value="@item.ProductId" />
-                        <input type="submit" value="Add" class="btn btn-success" />
+                        <input type="submit" value="+" class="btn btn-success btn-sm" />
                     </form>
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                    <form asp-action="DecrementProductQuantity" method="post">
+                    <p class="float-left mx-2 text-xl-center">@Html.DisplayFor(modelItem => item.Quantity)</p>
+                    <form class="float-left" asp-action="DecrementProductQuantity" method="post">
                         <input type="hidden" name="id" value="@item.OrderId" />
                         <input type="hidden" name="idPart" value="@item.ProductId" />
-                        <input type="submit" value="Remove" class="btn btn-danger" />
+                        <input type="submit" value="-" class="btn btn-danger btn-sm" />
                     </form>
                 </td>
             </tr>
@@ -43,4 +42,4 @@
     </tbody>
 </table>
 
-@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { products = ViewBag.listOfOrderItems}, null)
+<Span class="float-right">@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { products = ViewBag.listOfOrderItems }, null)</Span>
