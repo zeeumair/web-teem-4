@@ -38,45 +38,8 @@ namespace Webshop.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-            modelBuilder.Entity<Product>().HasData(
-
-                new Product
-                {
-                    Name = "airJordans",
-                    Price = 100,
-                    Image = ReadFile("Images/airJordans.jpg"),
-                    Description = "Fly high like Michael",
-                    Category = "sport",
-                    CreatedAt = DateTime.Today
-                },
-
-                  new Product
-                  {
-                      Name = "Nike Mercurial Vapor",
-                      Price = 100,
-                      Image = ReadFile("Images/NikeMercurialVapor.jpg"),
-                      Description = "Play Ball like Messi",
-                      Category = "sport",
-                      CreatedAt = DateTime.Today
-                  },
-                    new Product
-                    {
-                        Name = "Nike Air Zoom",
-                        Price = 100,
-                        Image = ReadFile("Images/NikeAirZoom.jpg"),
-                        Description = "Best running shoe ever",
-                        Category = "sport",
-                        CreatedAt = DateTime.Today
-                    }
-            );
-
-
-
-modelBuilder.Entity<OrderItem>()
-                .HasKey(oi => new { oi.OrderId, oi.ProductId });
-            modelBuilder.Entity<Review>()
-                 .HasKey(r => new { r.UserId, r.ProductId });
+            modelBuilder.Entity<OrderItem>().HasKey(oi => new { oi.OrderId, oi.ProductId });
+            modelBuilder.Entity<Review>().HasKey(r => new { r.UserId, r.ProductId });
             base.OnModelCreating(modelBuilder);
         }
         
