@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Data;
 using Webshop.Models;
 
@@ -20,49 +21,48 @@ namespace Webshop.Controllers
             _context = context;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(IQueryable<OrderItem> orderItem)
+        public IActionResult SelectPaymentAndDeliveryOption(string productId, string orderId, string quantity, string orderItemId)
         {
-            // Realy price has to be generated trough varukorg, and products 
-
-            decimal totalPrice = 0; 
-
-            foreach (var product in orderItem)
+            if (productId == null)
             {
-                totalPrice = product.Product.Price * Convert.ToDecimal(product.Quantity);
-            };
+                productId = "1"; 
+            }
 
-            ViewBag.OrderItems = orderItem;
+            var context = _context.Products.Find(Int32.Parse(productId));
+
+            decimal totalPrice = context.Price * Int32.Parse(quantity);
+
             ViewBag.totalPrice = totalPrice;
+            ViewBag.productId = productId;
+            ViewBag.orderId = orderId;
+            ViewBag.orderItemId = orderItemId;
 
             return View();
         }
 
     
 
-        public async Task<IActionResult> Confirmation(string paymentType, string deliveryTime, double totalPrice, IQueryable<OrderItem> orderItem)
+        public async Task<IActionResult> Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId)
         {
-            
 
-            //newOrder = new Order
-            //{
-            //    //Need a User sendt through the params
-            //    User = user,
-            //    PaymentOption = paymentType,
-            //    TotalAmount = totalPrice,
-            //    DeliveryOption = deliveryTime,
-            //    CreatedAt = DateTime.Today
-            //};
+            List<Product> products = new List<Product>();
 
-            ////aktivera senare
-            //_context.Orders.Add(newOrder);
-            //await _context.SaveChangesAsync();
+            var orderContext = _context.Orders.Find(Int32.Parse(orderItemId));
+            orderContext.Confirmed = true; 
+            await _context.SaveChangesAsync();
 
-            ViewBag.payment = paymentType;
+            var orderItemContext = _context.OrderItems.Find(Int32.Parse(orderItemId), Int32.Parse(orderId));
+
+            products.Add(orderItemContext.Product); 
+
+            ViewBag.products = products;
             ViewBag.delivery = deliveryTime;
             ViewBag.totalPrice = totalPrice;
-            ViewBag.orderItem = orderItem; 
+            ViewBag.orderConfirmationNumber = orderContext.Id;
 
-            return View();
+
+
+            return View(products);
         }
     }
 }
