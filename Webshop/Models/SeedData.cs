@@ -4,11 +4,36 @@ using Webshop.Data;
 using System;
 using System.Linq;
 using Webshop.Models;
+using System.IO;
 
 namespace Webshop
 {
     public static class SeedData
     {
+
+        public static byte[] ReadFile(string sPath)
+        {
+            //Initialize byte array with a null value initially.
+            byte[] data = null;
+
+            //Use FileInfo object to get file size.
+            FileInfo fInfo = new FileInfo(sPath);
+            long numBytes = fInfo.Length;
+
+            //Open FileStream to read file
+            FileStream fStream = new FileStream(sPath, FileMode.Open, FileAccess.Read);
+
+            //Use BinaryReader to read file stream into byte array.
+            BinaryReader br = new BinaryReader(fStream);
+
+            //When you use BinaryReader, you need to supply number of bytes 
+            //to read from file.
+            //In this case we want to read entire file. 
+            //So supplying total number of bytes.
+            data = br.ReadBytes((int)numBytes);
+
+            return data;
+        }
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new WebshopContext(
@@ -118,12 +143,12 @@ namespace Webshop
                             TotalAmount = 11.11,
                             DeliveryOption = "Express"
                         },
-                        Product = new Product
+                       Product = new Product
                         {
-                            Name = "Nike Air Zoom",
+                            Name = "airJordans",
                             Price = 100,
-                            Image = WebshopContext.ReadFile("Images/NikeAirZoom.jpg"),
-                            Description = "Best running shoe ever",
+                            Image = ReadFile("Images/airJordans.jpg"),
+                            Description = "Fly high like Michael",
                             Category = "sport",
                             CreatedAt = DateTime.Today
                         },

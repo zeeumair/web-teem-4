@@ -22,6 +22,9 @@ namespace Webshop.Controllers
         public async Task<IActionResult> Index()
         {
             var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+
+            ViewBag.ListOfOrderItems = webshopContext.ToListAsync(); 
+            
             return View(await webshopContext.ToListAsync());
         }
 

@@ -22,8 +22,10 @@
     <label>30 days</label>
     <input type="checkbox" id="thirtyDays" name="deliveryTime" value="thirtyDays">
     <label>Total Price</label>
-    <input type="text" name="price" value="@ViewBag.price" readonly />
+    <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
+    <input type="text" name="orderItem" value="@ViewBag.orderItems" hidden />
 
     <input type="submit" value="Order" />
 </form>
 
+<h3>Total Price: @ViewBag.totalPrice</h3>

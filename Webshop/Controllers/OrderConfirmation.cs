@@ -20,71 +20,47 @@ namespace Webshop.Controllers
             _context = context;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(User user, List<Product> products)
+        public IActionResult SelectPaymentAndDeliveryOption(IQueryable<OrderItem> orderItem)
         {
             // Realy price has to be generated trough varukorg, and products 
+
+            decimal totalPrice = 0; 
+
+            foreach (var product in orderItem)
+            {
+                totalPrice = product.Product.Price * Convert.ToDecimal(product.Quantity);
+            };
+
+            ViewBag.OrderItems = orderItem;
+            ViewBag.totalPrice = totalPrice;
+
             return View();
         }
 
     
 
-        public async Task<IActionResult> Confirmation(string paymentType, string deliveryTime, User user, List<Product> products)
+        public async Task<IActionResult> Confirmation(string paymentType, string deliveryTime, double totalPrice, IQueryable<OrderItem> orderItem)
         {
-
             
-
-            //// Only for test purpose before real products is is sendt through parameters. 
-
-            //List<Product> productList = new List<Product>();  
-
-            //var product = new Product
-            //{
-            //    Name = "airJordans",
-            //    Price = 100,
-            //    Image = ReadFile("Images/airJordans.jpg"),
-            //    Description = "Fly high like Michael",
-            //    Category = "sport", 
-            //    CreatedAt = DateTime.Today
-            //};
-
-            //productList.Add(product); 
-
-
-            // Only for test purpose before real user is is sendt through parameters. 
-            //var user = new User
-            //{
-
-            //    FirstName = "petter",
-            //    LastName = "Fagerlund",
-            //    Username = "petter",
-            //    Password = "123",
-            //    StreetAdress = "runbäcksgatan",
-            //    PostNumber = "123",
-            //    City = "göteborg",
-            //    Country = "Sweden",
-            //    Email = "petter@gmail.com",
-            //    Currency = "Sek",
-            //    CreatedAt = DateTime.Today,
-            //    PhoneNumber = "0709556644"
-            //};
-            ////////////////////////////////////////
 
             //newOrder = new Order
             //{
+            //    //Need a User sendt through the params
             //    User = user,
             //    PaymentOption = paymentType,
-            //    TotalAmount = Convert.ToDouble(price),
+            //    TotalAmount = totalPrice,
             //    DeliveryOption = deliveryTime,
             //    CreatedAt = DateTime.Today
             //};
 
-            //aktivera senare 
+            ////aktivera senare
             //_context.Orders.Add(newOrder);
             //await _context.SaveChangesAsync();
 
             ViewBag.payment = paymentType;
             ViewBag.delivery = deliveryTime;
-            //ViewBag.price = price;
+            ViewBag.totalPrice = totalPrice;
+            ViewBag.orderItem = orderItem; 
 
             return View();
         }
