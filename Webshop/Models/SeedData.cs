@@ -15,26 +15,49 @@ namespace Webshop
                 serviceProvider.GetRequiredService<
                     DbContextOptions<WebshopContext>>()))
             {
-                if (context.Users.Any())
+                if (context.Users.Any() && context.OrderItems.Any())
                 {
                     return;
                 }
 
-                context.Users.AddRange(
-                    new User {
-                        FirstName = "Test",
-                        LastName = "User",
-                        Username = "testuser1",
-                        Password = "password",
-                        StreetAdress = "Gogubbegatan 3",
-                        PostNumber = "41706",
-                        City = "Gothenburg",
-                        Country = "Sweden",
-                        Email = "test@testuser.com",
-                        Currency = "SEK",
-                        PhoneNumber = "0700000000"                       
-                    }
-                );
+                if (!context.OrderItems.Any())
+                {
+                    context.OrderItems.AddRange(
+                    new OrderItem
+                    {
+                        Order = new Order
+                        {
+                            User = context.Users.Any() ?
+                            context.Users.Where(u => u.Id == 1).FirstOrDefault() :
+                            new User
+                            {
+                                FirstName = "Test",
+                                LastName = "User",
+                                Username = "testuser1",
+                                Password = "password",
+                                StreetAdress = "Gogubbegatan 3",
+                                PostNumber = "41706",
+                                City = "Gothenburg",
+                                Country = "Sweden",
+                                Email = "test@testuser.com",
+                                Currency = "SEK",
+                                PhoneNumber = "0700000000"
+                            },
+                            PaymentOption = "Swish",
+                            TotalAmount = 11.11,
+                            DeliveryOption = "Express"
+                        },
+                        Product = new Product
+                        {
+                            Name = "TestProduct",
+                            Price = 73.57m,
+                            Image = 1,
+                            Description = "OMGZ-iest of shoes",
+                            Category = "TestCategory",
+                        },
+                        Quantity = 5,
+                    });
+                }
                 context.SaveChanges();
             }
         }
