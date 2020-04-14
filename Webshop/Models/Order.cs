@@ -13,5 +13,6 @@ namespace Webshop.Models
         public Double TotalAmount { get; set; }
         public string DeliveryOption { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool Confirmed { get; set; } = false;
     }
 }
