@@ -9,6 +9,7 @@ namespace Webshop.Models
         public string Name { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal Price { get; set; }
+        [Column(TypeName ="varbinary(MAX)")]
         public byte[] Image { get; set; }
         public string Description { get; set; }
         public string Category{ get; set; }
