@@ -1,33 +1,61 @@
-@Html.ActionLink("Back", "XXXXX", "XXXXXXX", null, null);
-
-------> Generate Confirmation number from created order
-
-@ViewBag.payment;
-@ViewBag.delivery;
+@model System.Collections.Generic.List<Webshop.Models.Product>
 
 
-@foreach (var item in ViewBag.products)
-{
-
-    <tbody>
-        <tr>
-            <td>
-                @item
-            </td>
-        </tr>
-    </tbody>  
-}
-
-@*@{
-        var base64 = Convert.ToBase64String(item.Image);
-        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+    @{
+        ViewData["Title"] = "Confirmation";
     }
-    <img src="@imgSrc" style="max-width: 100px; max-height:100px" />*@
+
+
+    @Html.ActionLink("Back", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new {productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId  }, null);
+
+    <p>
+        Your confirmaiton number is: @ViewBag.orderConfirmationNumber
+    </p>
+   
 
 
 
-------->>>> get all products that user has added in varukorg use code above to present image. Need to knwo which model to use.
 
-@Html.ActionLink("ShopMore", "XXXXX", "XXXXXXX", null, null);
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Image
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Price
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                        var base64 = Convert.ToBase64String(item.Image);
+                        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                        }
+                        <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<h1>Totalt Betalt @ViewBag.price KR</h1>
+
+    @Html.ActionLink("ShopMore", "Index", "Home", null, null);
+
+    <h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
+    <p>
+        Your order will be delivered to you within: @ViewBag.delivery days. 
+    </p>

@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="~/css/SelectPaymentAndDeliveryOptions.css" />
 </head>
 
-@Html.ActionLink("Back", "XXXXXXX", "XXXXXX", null, null)
+@Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
 
 
 
@@ -23,9 +23,13 @@
     <input type="checkbox" id="thirtyDays" name="deliveryTime" value="thirtyDays">
     <label>Total Price</label>
     <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
-    <input type="text" name="orderItem" value="@ViewBag.orderItems" hidden />
+    <input type="text" name="productId" value="@ViewBag.productId" hidden />
+    <input type="text" name="orderId" value="@ViewBag.orderId" hidden />
+    <input type="text" name="orderItemId" value="@ViewBag.orderItemId" hidden />
+    <input type="text" name="quantity" value="@ViewBag.quantity" hidden />
+
+    
 
     <input type="submit" value="Order" />
 </form>
 
-<h3>Total Price: @ViewBag.totalPrice</h3>

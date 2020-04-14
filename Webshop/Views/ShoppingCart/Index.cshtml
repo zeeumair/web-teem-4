@@ -4,7 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-@ViewBag.listOfOrderItems
 
 <table class="table">
     <thead>
@@ -43,4 +42,4 @@
     </tbody>
 </table>
 
-@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { products = ViewBag.listOfOrderItems}, null)
+@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId })

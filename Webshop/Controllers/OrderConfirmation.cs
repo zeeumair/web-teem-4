@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Data;
 using Webshop.Models;
 
@@ -20,50 +21,61 @@ namespace Webshop.Controllers
             _context = context;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(IQueryable<OrderItem> orderItem)
+        public IActionResult SelectPaymentAndDeliveryOption(string productId, string orderId, string quantity, string orderItemId)
         {
-            // Realy price has to be generated trough varukorg, and products 
-
-            decimal totalPrice = 0; 
-
-            foreach (var product in orderItem)
+            if (productId == null)
             {
-                totalPrice = product.Product.Price * Convert.ToDecimal(product.Quantity);
-            };
+                productId = "1"; 
+            }
 
-            ViewBag.OrderItems = orderItem;
+            var context = _context.Products.Find(Int32.Parse(productId));
+
+            decimal totalPrice = context.Price * Int32.Parse(quantity);
+
             ViewBag.totalPrice = totalPrice;
+            ViewBag.productId = productId;
+            ViewBag.orderId = orderId;
+            ViewBag.orderItemId = orderItemId;
+            ViewBag.quantity = quantity; 
 
             return View();
         }
 
     
 
-        public async Task<IActionResult> Confirmation(string paymentType, string deliveryTime, double totalPrice, IQueryable<OrderItem> orderItem)
+        public ActionResult Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId, string quantity)
         {
-            
+            List<Product> products = new List<Product>();
+            var orderItemContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
 
-            //newOrder = new Order
-            //{
-            //    //Need a User sendt through the params
-            //    User = user,
-            //    PaymentOption = paymentType,
-            //    TotalAmount = totalPrice,
-            //    DeliveryOption = deliveryTime,
-            //    CreatedAt = DateTime.Today
-            //};
+      
 
-            ////aktivera senare
-            //_context.Orders.Add(newOrder);
-            //await _context.SaveChangesAsync();
 
-            ViewBag.payment = paymentType;
+            foreach (var item in orderItemContext.ToList())
+            {
+                products.Add(item.Product);
+ 
+                
+            }
+
+            var orderContext = _context.Orders.Find(Int32.Parse(orderItemId));
+            orderContext.Confirmed = true; 
+             _context.SaveChangesAsync();
+
+            ViewBag.orderConfirmationNumber = orderContext.Id;
             ViewBag.delivery = deliveryTime;
+            ViewBag.paymentType = paymentType; 
             ViewBag.totalPrice = totalPrice;
-            ViewBag.orderItem = orderItem; 
+            ViewBag.productId = productId;
+            ViewBag.orderId = orderId;
+            ViewBag.quantity = quantity;
+            ViewBag.orderItemId = orderItemId;
 
-            return View();
-        }
+
+
+
+            return View(products);
+        }  
     }
 }
 
