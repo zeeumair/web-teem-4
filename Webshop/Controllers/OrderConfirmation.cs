@@ -69,14 +69,14 @@ namespace Webshop.Controllers
             //};
             ////////////////////////////////////////
 
-            newOrder = new Order
-            {
-                User = user,
-                PaymentOption = paymentType,
-                TotalAmount = Convert.ToDouble(price),
-                DeliveryOption = deliveryTime,
-                CreatedAt = DateTime.Today
-            };
+            //newOrder = new Order
+            //{
+            //    User = user,
+            //    PaymentOption = paymentType,
+            //    TotalAmount = Convert.ToDouble(price),
+            //    DeliveryOption = deliveryTime,
+            //    CreatedAt = DateTime.Today
+            //};
 
             //aktivera senare 
             //_context.Orders.Add(newOrder);
@@ -84,7 +84,7 @@ namespace Webshop.Controllers
 
             ViewBag.payment = paymentType;
             ViewBag.delivery = deliveryTime;
-            ViewBag.price = price;
+            //ViewBag.price = price;
 
             return View();
         }
