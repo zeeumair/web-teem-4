@@ -46,7 +46,8 @@ namespace Webshop.Controllers
             return View(orderItems);
         }
 
-        public async void AddProductToCart(int id)
+        [HttpPost]
+        public async Task<IActionResult> AddProductToCart(int id)
         {
             var userId = 1;
             if (OrderItemExists(userId, id))
@@ -65,15 +66,16 @@ namespace Webshop.Controllers
                         Order = order ?? new Order
                         {
                             User = await _context.Users.FindAsync(userId),
-                            PaymentOption = "Swish",
+                            PaymentOption = "",
                             TotalAmount = 0,
-                            DeliveryOption = "Express"
+                            DeliveryOption = ""
                         },
                         Product = product,
                         Quantity = 1
                     });
             }
             await _context.SaveChangesAsync();
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
         [HttpPost]
