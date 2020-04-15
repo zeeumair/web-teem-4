@@ -35,7 +35,12 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                
+                @{
+                    var base64 = Convert.ToBase64String(item.Image);
+                    var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                }
+                <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
@@ -45,7 +50,7 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="AddToShoppingCart" asp-route-id="@item.Id">Add to Shopping Cart</a>
+                <a asp-action="AddToCart" asp-controller="ShoppingCart" asp-route-id="@item.Id">Add to Shopping Cart</a>
             </td>
         </tr>
 }
