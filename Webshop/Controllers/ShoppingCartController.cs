@@ -21,7 +21,7 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product)/*.Where(u => !u.Order.Confirmed && u.Order.User.Id == 1)*/; // Add filter on current User once we have a user login system
 
             var orderItems = await webshopContext.ToListAsync();
             
@@ -32,11 +32,10 @@ namespace Webshop.Controllers
 
             foreach (var item in orderItems)
             {
-                productId = item.Product.Id.ToString();
-                orderId = item.Order.Id.ToString();
-                quantity = item.Quantity.ToString();
-                orderItemId = item.OrderId.ToString(); 
-
+                productId = productId + "," + item.Product.Id.ToString();
+                orderId = orderId + "," + item.Order.Id.ToString();
+                quantity = quantity + "," + item.Quantity.ToString();
+                orderItemId = orderItemId + "," + item.OrderId.ToString(); 
             }
 
             ViewBag.productId = productId;

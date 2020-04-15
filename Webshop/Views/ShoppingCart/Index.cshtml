@@ -56,5 +56,5 @@
     </tfoot>
 </table>
 <Span class="float-right mr-2">
-    @Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId })
+    @Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId, totalprice = @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2).ToString() })
 </Span>
