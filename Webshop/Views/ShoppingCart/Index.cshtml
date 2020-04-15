@@ -4,7 +4,9 @@
     ViewData["Title"] = "Index";
 }
 
-<table class="table mb-0">
+@Html.ActionLink("Back", "Index", "Home", null, null)
+
+<table class="table text-center">
     <thead>
         <tr>
             <th>
@@ -22,26 +24,34 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    <img src="@item.Product.Image" />
-                    @Html.DisplayFor(modelItem => item.Product.Name)
+                <td class="align-middle">
+                    @{
+                        var base64 = Convert.ToBase64String(item.Product.Image);
+                        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                    }
+                    <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+                    <h2 class="align-content-center">@Html.DisplayFor(modelItem => item.Product.Name)</h2>
                 </td>
-                <td class="align-items-center">
-                    <div class="mx-auto">
-                        <form class="float-left ml" asp-action="IncrementProductQuantity" method="post">
-                            <input type="hidden" name="id" value="@item.OrderId" />
-                            <input type="hidden" name="idPart" value="@item.ProductId" />
-                            <input type="submit" value="+" class="btn btn-success btn-sm" />
-                        </form>
-                        <h4 class="float-left mx-2 my-0 align-middle">@Html.DisplayFor(modelItem => item.Quantity)</h4>
-                        <form class="float-left" asp-action="DecrementProductQuantity" method="post">
-                            <input type="hidden" name="id" value="@item.OrderId" />
-                            <input type="hidden" name="idPart" value="@item.ProductId" />
-                            <input type="submit" value="-" class="btn btn-danger btn-sm" />
-                        </form>
+                <td class="align-middle">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <form asp-action="IncrementProductQuantity" method="post">
+                                <input type="hidden" name="id" value="@item.OrderId" />
+                                <input type="hidden" name="idPart" value="@item.ProductId" />
+                                <input type="submit" value="+" class="btn btn-success btn-sm py-0" />
+                            </form>
+                        </div>
+                        <h4 class="mx-auto">@Html.DisplayFor(modelItem => item.Quantity)</h4>
+                        <div class="input-group-append">
+                            <form asp-action="DecrementProductQuantity" method="post">
+                                <input type="hidden" name="id" value="@item.OrderId" />
+                                <input type="hidden" name="idPart" value="@item.ProductId" />
+                                <input type="submit" value="-" class="btn btn-danger btn-sm py-0" />
+                            </form>
+                        </div>
                     </div>
                 </td>
-                <td>
+                <td class="align-middle">
                     <h2>@Math.Round(item.Product.Price * item.Quantity, 2)</h2>
                 </td>
             </tr>
@@ -49,7 +59,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td>
+            <td class="justify-content-center" colspan="4">
                 <h4 class="text-center">Total cost: @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2) (SelectedCurrency)</h4>
             </td>
         </tr>
