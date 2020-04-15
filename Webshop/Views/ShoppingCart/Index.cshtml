@@ -4,8 +4,9 @@
     ViewData["Title"] = "Index";
 }
 
+@Html.ActionLink("Back", "Index", "Home", null, null)
 
-<table class="table">
+<table class="table text-center">
     <thead>
         <tr>
             <th>
@@ -14,32 +15,56 @@
             <th>
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.Price)
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Product.Name)
+                <td class="align-middle">
+                    @{
+                        var base64 = Convert.ToBase64String(item.Product.Image);
+                        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                    }
+                    <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+                    <h2 class="align-content-center">@Html.DisplayFor(modelItem => item.Product.Name)</h2>
                 </td>
-                <td>
-                    <form asp-action="IncrementProductQuantity" method="post">
-                        <input type="hidden" name="id" value="@item.OrderId" />
-                        <input type="hidden" name="idPart" value="@item.ProductId" />
-                        <input type="submit" value="Add" class="btn btn-success" />
-                    </form>
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                    <form asp-action="DecrementProductQuantity" method="post">
-                        <input type="hidden" name="id" value="@item.OrderId" />
-                        <input type="hidden" name="idPart" value="@item.ProductId" />
-                        <input type="submit" value="Remove" class="btn btn-danger" />
-                    </form>
+                <td class="align-middle">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <form asp-action="IncrementProductQuantity" method="post">
+                                <input type="hidden" name="id" value="@item.OrderId" />
+                                <input type="hidden" name="idPart" value="@item.ProductId" />
+                                <input type="submit" value="+" class="btn btn-success btn-sm py-0" />
+                            </form>
+                        </div>
+                        <h4 class="mx-auto">@Html.DisplayFor(modelItem => item.Quantity)</h4>
+                        <div class="input-group-append">
+                            <form asp-action="DecrementProductQuantity" method="post">
+                                <input type="hidden" name="id" value="@item.OrderId" />
+                                <input type="hidden" name="idPart" value="@item.ProductId" />
+                                <input type="submit" value="-" class="btn btn-danger btn-sm py-0" />
+                            </form>
+                        </div>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <h2>@Math.Round(item.Product.Price * item.Quantity, 2)</h2>
                 </td>
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td class="justify-content-center" colspan="4">
+                <h4 class="text-center">Total cost: @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2) (SelectedCurrency)</h4>
+            </td>
+        </tr>
+    </tfoot>
 </table>
-
-@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId })
+<Span class="float-right mr-2">
+    @Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId, totalprice = @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2).ToString() })
+</Span>

@@ -21,18 +21,28 @@ namespace Webshop.Controllers
             _context = context;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(string productId, string orderId, string quantity, string orderItemId)
+        public IActionResult SelectPaymentAndDeliveryOption(string productId, string orderId, string quantity, string orderItemId, string totalprice)
         {
-            if (productId == null)
-            {
-                productId = "1"; 
-            }
+          
 
-            var context = _context.Products.Find(Int32.Parse(productId));
+            List<string> prodIdList = new List<string>(productId.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> quantityList = new List<string>(quantity.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
-            decimal totalPrice = context.Price * Int32.Parse(quantity);
+            //decimal totalPrice = 0; 
 
-            ViewBag.totalPrice = totalPrice;
+            //foreach (var id in prodIdList)
+            //{
+            //    var context = _context.Products.Find(Int32.Parse(id));
+
+            //    for (int i = 0; i < quantityList.Count(); i++)
+            //    {
+            //        totalPrice = totalPrice + context.Price * Convert.ToDecimal(quantityList[i]);
+
+            //    }
+
+            //}
+
+            ViewBag.totalPrice = totalprice;
             ViewBag.productId = productId;
             ViewBag.orderId = orderId;
             ViewBag.orderItemId = orderItemId;
@@ -46,29 +56,37 @@ namespace Webshop.Controllers
         public ActionResult Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId, string quantity)
         {
             List<Product> products = new List<Product>();
-            var orderItemContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
+            List<string> orderIdList = new List<string>(orderId.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> orderItemIdList = new List<string>(orderItemId.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> QuantityIdList = new List<string>(quantity.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
-      
-
-
-            foreach (var item in orderItemContext.ToList())
+            foreach (var id in orderIdList)
             {
-                products.Add(item.Product);
- 
-                
+                var orderItemContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(id));
+
+                foreach (var item in orderItemContext.ToList())
+                {
+                    products.Add(item.Product);
+                    item.Order.Confirmed = true;
+                    ViewBag.orderConfirmationNumber = item.OrderId;
+
+                }
+                _context.SaveChangesAsync();
             }
 
-            var orderContext = _context.Orders.Find(Int32.Parse(orderItemId));
-            orderContext.Confirmed = true; 
-             _context.SaveChangesAsync();
 
-            ViewBag.orderConfirmationNumber = orderContext.Id;
+         
+
+
+
+
+
             ViewBag.delivery = deliveryTime;
             ViewBag.paymentType = paymentType; 
             ViewBag.totalPrice = totalPrice;
             ViewBag.productId = productId;
             ViewBag.orderId = orderId;
-            ViewBag.quantity = quantity;
+            ViewBag.quantity = QuantityIdList;
             ViewBag.orderItemId = orderItemId;
 
 

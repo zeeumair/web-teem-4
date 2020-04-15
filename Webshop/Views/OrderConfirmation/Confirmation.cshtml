@@ -28,16 +28,22 @@
                 <th>
                     Price
                 </th>
+                <th>
+                    Quantity
+                </th>
             </tr>
         </thead>
         <tbody>
+           @{ 
+               var i = 0;
+           }
             @foreach (var item in Model)
             {
                 <tr>
                     <td>
                         @{
-                        var base64 = Convert.ToBase64String(item.Image);
-                        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                            var base64 = Convert.ToBase64String(item.Image);
+                            var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
                         }
                         <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
                     </td>
@@ -47,8 +53,16 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Price)
                     </td>
-                </tr>
-            }
+                    <td>
+                        @ViewBag.quantity[i]
+                    </td>
+                  </tr>
+               i++;
+             }
+        <tr>
+           
+
+        </tr>
         </tbody>
     </table>
 
