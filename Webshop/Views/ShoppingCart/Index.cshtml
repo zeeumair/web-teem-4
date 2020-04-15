@@ -4,33 +4,33 @@
     ViewData["Title"] = "Index";
 }
 
-<table class="table">
+<table class="table mb-0">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Product)
             </th>
-            <th>
+            <th></th>
+            <th class="text-center">
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                <td colspan="2">
                     <img src="@item.Product.Image" />
                     @Html.DisplayFor(modelItem => item.Product.Name)
                 </td>
-                <td>
-                    <form class="float-left" asp-action="IncrementProductQuantity" method="post">
+                <td class="align-items-center">
+                    <form class="float-left ml" asp-action="IncrementProductQuantity" method="post">
                         <input type="hidden" name="id" value="@item.OrderId" />
                         <input type="hidden" name="idPart" value="@item.ProductId" />
                         <input type="submit" value="+" class="btn btn-success btn-sm" />
                     </form>
-                    <p class="float-left mx-2 text-xl-center">@Html.DisplayFor(modelItem => item.Quantity)</p>
+                    <h4 class="float-left mx-2 my-0 align-middle">@Html.DisplayFor(modelItem => item.Quantity)</h4>
                     <form class="float-left" asp-action="DecrementProductQuantity" method="post">
                         <input type="hidden" name="id" value="@item.OrderId" />
                         <input type="hidden" name="idPart" value="@item.ProductId" />
@@ -40,6 +40,12 @@
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">
+                <h4 class="text-center">Total cost: @Math.Round(Model.Sum(p => p.Product.Price), 2) (SelectedCurrency)</h4>
+            </td>
+        </tr>
+    </tfoot>
 </table>
-
-<Span class="float-right">@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { products = ViewBag.listOfOrderItems }, null)</Span>
+<Span class="float-right mr-2">@Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { products = ViewBag.listOfOrderItems }, null)</Span>
