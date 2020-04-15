@@ -21,10 +21,10 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-           var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
 
-           var orderItems = await webshopContext.ToListAsync();
-
+            var orderItems = await webshopContext.ToListAsync();
+            
             var productId = "";
             var orderId = "";
             var quantity = "";
@@ -39,14 +39,42 @@ namespace Webshop.Controllers
 
             }
 
-
             ViewBag.productId = productId;
             ViewBag.orderId = orderId;
             ViewBag.quantity = quantity;
             ViewBag.orderItemId = orderItemId;
 
-
             return View(orderItems);
+        }
+
+        public async void AddProductToCart(int id)
+        {
+            var userId = 1;
+            if (OrderItemExists(userId, id))
+            {
+                var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Id == userId && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
+                orderItem.Quantity += 1;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var product = await _context.Products.FindAsync(id);
+                var order = await _context.Orders.Where(o => o.User.Id == userId && !o.Confirmed).FirstOrDefaultAsync();
+                var newOrderItem = _context.OrderItems.Add(
+                    new OrderItem
+                    {
+                        Order = order ?? new Order
+                        {
+                            User = await _context.Users.FindAsync(userId),
+                            PaymentOption = "Swish",
+                            TotalAmount = 0,
+                            DeliveryOption = "Express"
+                        },
+                        Product = product,
+                        Quantity = 1
+                    });
+            }
+            await _context.SaveChangesAsync();
         }
 
         [HttpPost]
@@ -78,9 +106,9 @@ namespace Webshop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderItemExists(int id)
+        private bool OrderItemExists(int id, int idPart)
         {
-            return _context.OrderItems.Any(e => e.OrderId == id);
+            return _context.OrderItems.Any(e => e.OrderId == id && e.ProductId == idPart && !e.Order.Confirmed);
         }
     }
 }
