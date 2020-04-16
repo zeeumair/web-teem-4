@@ -77,7 +77,7 @@ namespace Webshop
                         {
                             Name = "airJordans",
                             Price = 100,
-                            Image = WebshopContext.ReadFile("Images/airJordans.jpg"),
+                            Image = ReadFile("Images/airJordans.jpg"),
                             Description = "Fly high like Michael",
                             Category = "sport",
                             CreatedAt = DateTime.Today
@@ -112,7 +112,7 @@ namespace Webshop
                         {
                             Name = "Nike Mercurial Vapor",
                             Price = 100,
-                            Image = WebshopContext.ReadFile("Images/NikeMercurialVapor.jpg"),
+                            Image = ReadFile("Images/NikeMercurialVapor.jpg"),
                             Description = "Play Ball like Messi",
                             Category = "sport",
                             CreatedAt = DateTime.Today
