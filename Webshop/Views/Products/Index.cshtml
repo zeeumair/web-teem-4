@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Webshop.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @{
+                    var base64 = Convert.ToBase64String(item.Image);
+                    var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                }
+                <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                @Html.ActionLink("Add to Shopping Cart", "AddProductToCart", "ShoppingCart", new { id = item.Id }, null)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
