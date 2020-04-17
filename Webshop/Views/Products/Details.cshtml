@@ -53,6 +53,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="AddToCart" asp-controller="ShoppingCart" asp-route-id="@Model.Id">Add to Shopping Cart</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to List</a> |
+    @Html.ActionLink("Add to Shopping Cart", "AddProductToCart", "ShoppingCart", new { id = Model.Id }, null)
 </div>

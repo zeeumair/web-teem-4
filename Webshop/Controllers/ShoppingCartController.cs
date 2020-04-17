@@ -46,7 +46,6 @@ namespace Webshop.Controllers
             return View(orderItems);
         }
 
-        [HttpPost]
         public async Task<IActionResult> AddProductToCart(int id)
         {
             var userId = 1;
