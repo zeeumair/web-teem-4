@@ -68,6 +68,7 @@
 
 
     @Html.ActionLink("ShopMore", "Index", "Home", null, null);
+    @Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new {productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId  }, null)
 
     <h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
     <p>

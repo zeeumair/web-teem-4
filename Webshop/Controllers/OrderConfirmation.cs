@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Webshop.Data;
 using Webshop.Models;
 
@@ -14,11 +15,13 @@ namespace Webshop.Controllers
     {
 
         private readonly WebshopContext _context;
+        private readonly IConfiguration _config;
         private Order newOrder;
 
-        public OrderConfirmationController(WebshopContext context)
+        public OrderConfirmationController(WebshopContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         public IActionResult SelectPaymentAndDeliveryOption(string productId, string orderId, string quantity, string orderItemId, string totalprice)
@@ -53,7 +56,7 @@ namespace Webshop.Controllers
 
     
 
-        public ActionResult Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId, string quantity)
+        public async Task<ActionResult> Confirmation(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId, string quantity)
         {
             List<Product> products = new List<Product>();
             List<string> orderIdList = new List<string>(orderId.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
@@ -64,14 +67,14 @@ namespace Webshop.Controllers
             {
                 var orderItemContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(id));
 
-                foreach (var item in orderItemContext.ToList())
+                foreach (var item in await orderItemContext.ToListAsync())
                 {
                     products.Add(item.Product);
                     item.Order.Confirmed = true;
                     ViewBag.orderConfirmationNumber = item.OrderId;
 
                 }
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
 
 
@@ -89,11 +92,39 @@ namespace Webshop.Controllers
             ViewBag.quantity = QuantityIdList;
             ViewBag.orderItemId = orderItemId;
 
-
+            
 
 
             return View(products);
         }  
+
+        public async Task<ActionResult> DownloadConfirmationPdf(string paymentType, string deliveryTime, double totalPrice, string productId, string orderId, string orderItemId, string quantity)
+        {
+
+            List<Product> products = new List<Product>();
+            List<string> orderIdList = new List<string>(orderId.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> orderItemIdList = new List<string>(orderItemId.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> QuantityIdList = new List<string>(quantity.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+            foreach (var id in orderIdList)
+            {
+                var orderItemContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(id));
+
+                foreach (var item in await orderItemContext.ToListAsync())
+                {
+                    if(item.Product != null)
+                        products.Add(item.Product);
+                }
+            }
+
+            var pdfStream = await GetOrderConfirmationPDF.ViewToString(this, products, _config.GetValue<string>(WebHostDefaults.ContentRootKey));
+            pdfStream.Position = 0;
+            var result = new FileStreamResult(pdfStream, "application/pdf");
+            result.FileDownloadName = "OrderConfirmation.pdf";
+
+            return result;
+        } 
     }
+
 }
 
