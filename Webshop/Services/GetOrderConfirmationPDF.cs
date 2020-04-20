@@ -14,7 +14,7 @@ namespace Webshop
 {
     public class GetOrderConfirmationPDF
     {
-        public static async Task<MemoryStream> ViewToString(Controller controller, IEnumerable<Product> model, string path)
+        public static async Task<byte []> ViewToString(Controller controller, List<OrderItem> model)
         {
             controller.ViewData.Model = model;
 
@@ -40,7 +40,7 @@ namespace Webshop
                 var result = writer.GetStringBuilder().ToString();
                 HtmlToPdf renderer = new HtmlToPdf();
                 
-                return renderer.RenderHtmlAsPdf(result).Stream;
+                return renderer.RenderHtmlAsPdf(result).BinaryData;
             }
         }
     }

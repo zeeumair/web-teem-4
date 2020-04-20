@@ -1,76 +1,66 @@
-@model System.Collections.Generic.List<Webshop.Models.Product>
+@model IEnumerable<Webshop.Models.OrderItem>
 
+@{
+    ViewData["Title"] = "Confirmation";
+}
 
-    @{
-        ViewData["Title"] = "Confirmation";
-    }
+@{
+    var orderId = Model.Select(o => o.OrderId).FirstOrDefault();
+}
 
+<!--@Html.ActionLink("Back", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId }, null);-->
 
-    @Html.ActionLink("Back", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new {productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId  }, null);
-
-    <p>
-        Your confirmaiton number is: @ViewBag.orderConfirmationNumber
-    </p>
-   
-
-
-
-
-    <table>
-        <thead>
-            <tr>
-                <th>
-                    Image
-                </th>
-                <th>
-                    Name
-                </th>
-                <th>
-                    Price
-                </th>
-                <th>
-                    Quantity
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-           @{ 
-               var i = 0;
-           }
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @{
-                            var base64 = Convert.ToBase64String(item.Image);
-                            var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
-                        }
-                        <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price)
-                    </td>
-                    <td>
-                        @ViewBag.quantity[i]
-                    </td>
-                  </tr>
-               i++;
-             }
+<p>
+    Your confirmation number is: @orderId;
+</p>
+<table>
+    <thead>
         <tr>
-           
-
+            <th>
+                Image
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Quantity
+            </th>
         </tr>
-        </tbody>
-    </table>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        var base64 = Convert.ToBase64String(item.Product.Image);
+                        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                    }
+                    <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name);
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Price);
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity);
+                </td>
+            </tr>
+        }
+        <tr>
+        </tr>
+    </tbody>
+</table>
 
+@Html.ActionLink("ShopMore", "Index", "/", null, null);
+@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = orderId }, null)
 
-    @Html.ActionLink("ShopMore", "Index", "Home", null, null);
-    @Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new {productId = ViewBag.productId, orderId = ViewBag.orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId  }, null)
-
-    <h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
-    <p>
-        Your order will be delivered to you within: @ViewBag.delivery days. 
-    </p>
+<h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
+<p>
+    Your order will be delivered to you within: @ViewBag.delivery days.
+</p>

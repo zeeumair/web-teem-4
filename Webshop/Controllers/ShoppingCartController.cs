@@ -21,7 +21,7 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product)/*.Where(u => !u.Order.Confirmed && u.Order.User.Id == 1)*/; // Add filter on current User once we have a user login system
+            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
 
             var orderItems = await webshopContext.ToListAsync();
 
@@ -39,7 +39,7 @@ namespace Webshop.Controllers
             }
 
             ViewBag.productId = productId;
-            ViewBag.orderId = orderId;
+            ViewBag.orderId = orderItems.Select(o => o.OrderId).FirstOrDefault();
             ViewBag.quantity = quantity;
             ViewBag.orderItemId = orderItemId;
 
@@ -106,9 +106,9 @@ namespace Webshop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderItemExists(int id, int idPart)
+        private bool OrderItemExists(int userId, int id)
         {
-            return _context.OrderItems.Any(e => e.OrderId == id && e.ProductId == idPart && !e.Order.Confirmed);
+            return _context.OrderItems.Any(e => e.Order.User.Id == userId && e.ProductId == id && !e.Order.Confirmed);
         }
     }
 }
