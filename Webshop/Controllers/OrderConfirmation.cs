@@ -16,7 +16,6 @@ namespace Webshop.Controllers
 
         private readonly WebshopContext _context;
         private readonly IConfiguration _config;
-        private Order newOrder;
 
         public OrderConfirmationController(WebshopContext context, IConfiguration config)
         {
@@ -39,24 +38,47 @@ namespace Webshop.Controllers
 
         public async Task<ActionResult> Confirmation(int orderId)
         {
-            var orderItems = await GetOrderItemsByOrder(orderId);
-            orderItems.ForEach(o => { o.Order.Confirmed = true; });
+            try
+            {
+                var orderItems = await GetOrderItemsByOrder(orderId);
+                orderItems.ForEach(o => { o.Order.Confirmed = true; });
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return View(orderItems);
+                return View(orderItems);
+            }
+            catch(Exception e)
+            {
+
+                return NotFound(e.Message);
+            }
         }  
 
         public async Task<ActionResult> DownloadConfirmationPdf(int orderId)
         {
-            var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId, true));
-            return File(dataStream, "application/pdf", "OrderConfirmation.pdf");
+            try
+            {
+                var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId, true));
+                return File(dataStream, "application/pdf", "OrderConfirmation.pdf");
+            }
+            catch (Exception e)
+            {
+
+                return NotFound(e.Message);
+            }
         }
 
         public async Task<List<OrderItem>> GetOrderItemsByOrder(int orderId, bool includeConfirmed = false)
         {
             var orderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == orderId && o.Order.Confirmed == includeConfirmed);
-            return await orderItems.ToListAsync();
+            if(orderId <= 0 || orderItems.Count() <= 0)
+            {
+                throw new Exception("Could not find your Order.");
+            }
+            else
+            {
+                return await orderItems.ToListAsync();
+            }
         }
     }
 

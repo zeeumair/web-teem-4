@@ -23,10 +23,10 @@ namespace Webshop
                 IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
                 ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, "Confirmation", false);
 
-                //if (viewResult.Success == false)
-                //{
-                //    Add Proper error handling
-                //}
+                if (viewResult.Success == false)
+                {
+                    throw new Exception("Could not find the page to convert into a PDF.");
+                }
 
                 ViewContext viewContext = new ViewContext(
                     controller.ControllerContext,

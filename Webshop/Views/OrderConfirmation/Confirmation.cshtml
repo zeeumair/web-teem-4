@@ -8,10 +8,8 @@
     var orderId = Model.Select(o => o.OrderId).FirstOrDefault();
 }
 
-<!--@Html.ActionLink("Back", "SelectPaymentAndDeliveryOption", "OrderConfirmation", new { productId = ViewBag.productId, orderId = orderId, quantity = ViewBag.quantity, orderItemId = ViewBag.orderItemId }, null);-->
-
 <p>
-    Your confirmation number is: @orderId;
+    Your confirmation number is: @orderId
 </p>
 <table>
     <thead>
@@ -42,13 +40,13 @@
                     <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Product.Name);
+                    @Html.DisplayFor(modelItem => item.Product.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Product.Price);
+                    @Html.DisplayFor(modelItem => item.Product.Price)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Quantity);
+                    @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
             </tr>
         }
@@ -57,7 +55,7 @@
     </tbody>
 </table>
 
-@Html.ActionLink("ShopMore", "Index", "/", null, null);
+@Html.ActionLink("ShopMore", "Index", "/", null, null)
 @Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = orderId }, null)
 
 <h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
