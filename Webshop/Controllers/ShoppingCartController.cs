@@ -23,14 +23,30 @@ namespace Webshop.Controllers
         {
             var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
 
-            var orderItems = await webshopContext.ToListAsync();
+            List<string> orderItems = new List<string>();
+
+            foreach (var item in webshopContext)
+            {
+                orderItems.Add(item.OrderId.ToString());
+            }
+
+            var x = orderItems;
+
+            TempData["Things"] = orderItems;
+
+
+            var orderItemToList = await webshopContext.ToListAsync();
+
+            
 
             var productId = "";
             var orderId = "";
             var quantity = "";
             var orderItemId = "";
 
-            foreach (var item in orderItems)
+            //Listan Är NUL???????? Kan itne gå vidare
+
+            foreach (var item in orderItemToList)
             {
                 productId = productId + "," + item.Product.Id.ToString();
                 orderId = orderId + "," + item.Order.Id.ToString();
@@ -39,11 +55,13 @@ namespace Webshop.Controllers
             }
 
             ViewBag.productId = productId;
-            ViewBag.orderId = orderItems.Select(o => o.OrderId).FirstOrDefault();
+            ViewBag.orderId = orderItemToList.Select(o => o.OrderId).FirstOrDefault();
             ViewBag.quantity = quantity;
             ViewBag.orderItemId = orderItemId;
 
-            return View(orderItems);
+            ViewBag.orderItemsList = orderItems;
+
+            return View(orderItemToList);
         }
 
         public async Task<IActionResult> AddProductToCart(int id)
@@ -74,6 +92,7 @@ namespace Webshop.Controllers
                     });
             }
             await _context.SaveChangesAsync();
+
             return Redirect(Request.Headers["Referer"].ToString());
         }
 

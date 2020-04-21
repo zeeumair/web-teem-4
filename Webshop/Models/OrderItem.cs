@@ -5,6 +5,7 @@ namespace Webshop.Models
 {
     public class OrderItem
     {
+      
         public int OrderId { get; set; }
         [ForeignKey("OrderId")]
         public virtual Order Order { get; set; }

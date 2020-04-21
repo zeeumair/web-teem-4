@@ -70,6 +70,27 @@
             document.getElementById("swish").disabled = false;
         }
     }
+
+
+    //function SendConfirmationViaEmail(orderId){
+    //      $.ajax({
+    //        url: "/OrderConfirmation/ReciveConfirmationViaEmail",
+    //        dataType: 'json',
+    //        data: {
+    //                  id: orderId,
+    //        },
+    //        type: "POST",
+    //        success: function (data) {
+    //            alert("success");
+    //        },
+    //        error: function (a, b, c) {
+    //            alert("Error")
+    //        }
+    //    });
+    //}
+
+
+
 </script>
 
 
@@ -96,7 +117,9 @@
     <input type="text" name="quantity" value="@ViewBag.quantity" hidden />
 
 
+    
+    <input type="submit" id="submit" value="Order" disabled />
 
-    <input type="submit" id="submit" value="Order" disabled/>
+    @ViewBag.orderId
 </form>
 

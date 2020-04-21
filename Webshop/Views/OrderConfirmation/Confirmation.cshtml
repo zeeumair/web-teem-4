@@ -4,12 +4,8 @@
     ViewData["Title"] = "Confirmation";
 }
 
-@{
-    var orderId = Model.Select(o => o.OrderId).FirstOrDefault();
-}
-
 <p>
-    Your confirmation number is: @orderId
+    Your confirmation number is: @ViewBag.orderId
 </p>
 <table>
     <thead>
@@ -56,9 +52,12 @@
 </table>
 
 @Html.ActionLink("ShopMore", "Index", "/", null, null)
-@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = orderId }, null)
+@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = ViewBag.orderId }, null)
 
 <h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
 <p>
     Your order will be delivered to you within: @ViewBag.delivery.
+</p>
+<p>
+    This confirmation has also been sent to your email! 
 </p>
