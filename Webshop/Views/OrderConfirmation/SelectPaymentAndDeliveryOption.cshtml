@@ -1,6 +1,3 @@
-<head>
-    <link rel="stylesheet" href="~/css/SelectPaymentAndDeliveryOptions.css" />
-</head>
 
 @Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
 
@@ -10,17 +7,18 @@
 <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
     <h2> Payment</h2>
     <label>Swish</label>
-    <input type="checkbox" id="swish" name="paymentType" value="swish">
+    <input type="checkbox" id="swish" name="paymentType" onclick="TogglePayment()" value="swish">
     <label>Invoice</label>
-    <input type="checkbox" id="invoice" name="paymentType" value="invoice">
+    <input type="checkbox" id="invoice" name="paymentType" onclick="TogglePayment()" value="invoice">
 
     <h2>Delivery</h2>
     <label>2-5 days</label>
-    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="twoToFiveDay">
+    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="twoToFiveDay" onclick="ToggleDelivery()">
     <label>5-10 days</label>
-    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="fiveToTenDays">
+    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="fiveToTenDays" onclick="ToggleDelivery2()">
     <label>30 days</label>
-    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="thirtyDays">
+    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="thirtyDays" onclick="ToggleDelivery3()">
+     <br />
     <label>Total Price</label>
     <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
     <input type="text" name="productId" value="@ViewBag.productId" hidden />
@@ -30,6 +28,6 @@
 
 
 
-    <input type="submit" value="Order" />
+    <input type="submit" id="submit" value="Order" disabled/>
 </form>
 
