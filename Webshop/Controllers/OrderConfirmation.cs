@@ -34,10 +34,11 @@ namespace Webshop.Controllers
             return View();
         }
 
-    
-
-        public async Task<ActionResult> Confirmation(int orderId)
+        public async Task<ActionResult> Confirmation(int orderId, string totalPrice, string paymentType, string deliveryTime)
         {
+            ViewBag.totalPrice = totalPrice;
+            ViewBag.paymentType = paymentType;
+            ViewBag.delivery = deliveryTime;
             try
             {
                 var orderItems = await GetOrderItemsByOrder(orderId);

@@ -3,31 +3,100 @@
 
 
 
+<script type="text/javascript">
+    function ToggleDelivery() {
+        if (document.getElementById("twoToFiveDay").checked == true) {
+            document.getElementById("fiveToTenDays").disabled = true;
+            document.getElementById("thirtyDays").disabled = true;
+            if (
+                document.getElementById("swish").checked == true ||
+                document.getElementById("invoice").checked == true
+            ) {
+                document.getElementById("submit").disabled = false;
+            }
+        }
+        if (document.getElementById("twoToFiveDay").checked == false) {
+            document.getElementById("fiveToTenDays").disabled = false;
+            document.getElementById("thirtyDays").disabled = false;
+            document.getElementById("submit").disabled = true;
+        }
 
-    <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
-        <h2> Payment</h2>
-        <label>Swish</label>
-        <input type="checkbox" id="swish" name="paymentType" onclick="TogglePayment()" value="swish">
-        <label>Invoice</label>
-        <input type="checkbox" id="invoice" name="paymentType" onclick="TogglePayment()" value="invoice">
+    };
+    function ToggleDelivery2() {
+        if (document.getElementById("fiveToTenDays").checked == true) {
+            document.getElementById("twoToFiveDay").disabled = true;
+            document.getElementById("thirtyDays").disabled = true;
+            if (
+                document.getElementById("swish").checked == true ||
+                document.getElementById("invoice").checked == true
+            ) {
+                document.getElementById("submit").disabled = false;
+            }
+        }
+        if (document.getElementById("fiveToTenDays").checked == false) {
+            document.getElementById("twoToFiveDay").disabled = false;
+            document.getElementById("thirtyDays").disabled = false;
+            document.getElementById("submit").disabled = true;
+        }
+    }
+    function ToggleDelivery3() {
 
-        <h2>Delivery</h2>
-        <label>2-5 days</label>
-        <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="twoToFiveDay" onclick="ToggleDelivery()">
-        <label>5-10 days</label>
-        <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="fiveToTenDays" onclick="ToggleDelivery2()">
-        <label>30 days</label>
-        <input type="checkbox" id="thirtyDays" name="deliveryTime" value="thirtyDays" onclick="ToggleDelivery3()">
-        <br />
-        <label>Total Price</label>
-        <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
-        <input type="text" name="productId" value="@ViewBag.productId" hidden />
-        <input type="text" name="orderId" value="@ViewBag.orderId" hidden />
-        <input type="text" name="orderItemId" value="@ViewBag.orderItemId" hidden />
-        <input type="text" name="quantity" value="@ViewBag.quantity" hidden />
+        if (document.getElementById("thirtyDays").checked == true) {
+            document.getElementById("twoToFiveDay").disabled = true;
+            document.getElementById("fiveToTenDays").disabled = true;
+            if (
+                document.getElementById("swish").checked == true ||
+                document.getElementById("invoice").checked == true
+            ) {
+                document.getElementById("submit").disabled = false;
+            }
+        }
+        if (document.getElementById("thirtyDays").checked == false) {
+            document.getElementById("twoToFiveDay").disabled = false;
+            document.getElementById("fiveToTenDays").disabled = false;
+            document.getElementById("submit").disabled = true;
+        }
+    }
+    function TogglePayment() {
+        if (document.getElementById("invoice").checked == true) {
+            document.getElementById("swish").disabled = true;
+        } else if (document.getElementById("swish").checked == true) {
+            document.getElementById("invoice").disabled = true;
+        }
+        else if (document.getElementById("swish").checked == false) {
+            document.getElementById("invoice").disabled = false;
+        }
+        if (document.getElementById("invoice").checked == false) {
+            document.getElementById("swish").disabled = false;
+        }
+    }
+</script>
+
+
+<form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
+    <h2> Payment</h2>
+    <label>Swish</label>
+    <input type="checkbox" id="swish" name="paymentType" onclick="TogglePayment()" value="swish">
+    <label>Invoice</label>
+    <input type="checkbox" id="invoice" name="paymentType" onclick="TogglePayment()" value="invoice">
+
+    <h2>Delivery</h2>
+    <label>2-5 days</label>
+    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="2-5 Days" onclick="ToggleDelivery()">
+    <label>5-10 days</label>
+    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="5-10 Days" onclick="ToggleDelivery2()">
+    <label>30 days</label>
+    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="30 Days" onclick="ToggleDelivery3()">
+    <br />
+    <label>Total Price</label>
+    <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
+    <input type="text" name="productId" value="@ViewBag.productId" hidden />
+    <input type="text" name="orderId" value="@ViewBag.orderId" hidden />
+    <input type="text" name="orderItemId" value="@ViewBag.orderItemId" hidden />
+    <input type="text" name="quantity" value="@ViewBag.quantity" hidden />
 
 
 
-        <input type="submit" id="submit" value="Order" /> <!--Commented out <disabled> value for testing purposes-->
-    </form>
+    <input type="submit" id="submit" value="Order" disabled/>
+</form>
 
