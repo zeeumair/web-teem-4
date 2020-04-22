@@ -17,6 +17,12 @@ namespace Webshop.Controllers
 
         private readonly WebshopContext _context;
         private readonly IConfiguration _config;
+        private string recipient;
+        private string subject;
+        private string body;
+        private string orderId;
+        private IEnumerable<string> orderedItems;
+        private IEnumerable<string> orderItems;
 
         public OrderConfirmationController(WebshopContext context, IConfiguration config)
         {
@@ -24,54 +30,41 @@ namespace Webshop.Controllers
             _config = config;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(string productId, int orderId, string quantity, string orderItemId, string totalprice, List<OrderItem> orderItemsList)
+        public IActionResult SelectPaymentAndDeliveryOption(int orderId,string totalprice)
         {
 
-            var things = TempData["Things"] as IEnumerable<string>;
-
-            TempData["Things2"] = things;
-
-            var x = orderItemsList.Count();  
-
-            ViewBag.orderItemsList = orderItemsList;
+            orderItems = TempData["OrderItems"] as IEnumerable<string>;
 
             ViewBag.totalPrice = totalprice;
-            ViewBag.productId = productId;
             ViewBag.orderId = orderId.ToString();
-            ViewBag.orderItemId = orderItemId;
-            ViewBag.quantity = quantity;
 
-
+            TempData["OrderedItems"] = orderItems;
 
             return View();
         }
 
-        public async Task<ActionResult> Confirmation(int orderId, string totalPrice, string paymentType, string deliveryTime, string productId)
+        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
         {
-           
 
-            var things = TempData["Things2"] as IEnumerable<string>;
-
-            IQueryable<OrderItem> orderItemIqueryableForView;
-            orderItemIqueryableForView = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where( o => o.OrderId == orderId);
-
-       
+            orderedItems = TempData["OrderedItems"] as IEnumerable<string>;
+            orderId = "";
 
             IQueryable<OrderItem> orderItemIqueryable;
+            orderItemIqueryable = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
+
             List<OrderItem> orderItemsList = new List<OrderItem>();
 
-            orderItemIqueryable = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
-            
 
-
-                foreach (var orderItemss in orderItemIqueryable)
+            foreach (var orderItemss in orderItemIqueryable)
                 {
-                    if(things.Contains(orderItemss.OrderId.ToString()))
+                    if(orderedItems.Contains(orderItemss.OrderId.ToString()))
                     {
                         orderItemss.Order.PaymentOption = paymentType;
                         orderItemss.Order.DeliveryOption = deliveryTime;
                         orderItemss.Order.TotalAmount = Convert.ToDouble(totalPrice);
                         orderItemss.Order.Confirmed = true;
+                        
+                        orderId = orderItemss.OrderId.ToString(); 
                         
                         orderItemsList.Add(orderItemss);
 
@@ -80,30 +73,11 @@ namespace Webshop.Controllers
 
             await _context.SaveChangesAsync();
 
-
-            //var orderItem = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == );
-
-
-
-            //foreach (var orderItemId in things)
-            //{
-            //    orderitems = _context.OrderItems.Find(orderItemId);
-            //    orderitems.Order.PaymentOption = paymentType;
-            //    orderitems.Order.DeliveryOption = deliveryTime;
-            //    orderitems.Order.TotalAmount = Convert.ToDouble(totalPrice);
-            //    orderitems.Order.Confirmed = true;
-
-            //    orderItemsList.Add(orderitems);
-
-            //    await _context.SaveChangesAsync();
-            //}
-
             ReciveConfirmationViaEmail(orderItemsList);
 
-            ViewBag.totalPrice = totalPrice;
-            ViewBag.paymentType = paymentType;
-            ViewBag.delivery = deliveryTime;
-            ViewBag.orderId = orderId.ToString();
+
+            ///----------> Andreas metoder?? <--------------------
+
             //try
             //{
             //    var orderItems = await GetOrderItemsByOrder(orderId);
@@ -118,6 +92,16 @@ namespace Webshop.Controllers
 
             //    return NotFound(e.Message);
             //}
+
+            IQueryable<OrderItem> orderItemIqueryableForView;
+            orderItemIqueryableForView = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
+
+
+            ViewBag.totalPrice = totalPrice;
+            ViewBag.paymentType = paymentType;
+            ViewBag.delivery = deliveryTime;
+            ViewBag.orderId = orderId;
+
             return View(orderItemIqueryableForView); 
         }  
 
@@ -165,44 +149,16 @@ namespace Webshop.Controllers
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
+                //Add user when user is availible
+
             }
 
             purchaseConfirmation = purchaseConfirmation + $"for the amount of ${totalAmount}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
-
-          var x =  purchaseConfirmation;
-
-            //var orderItem = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
-            //var quantity = 0;
-            ////Edit when user is availible
-            //var email = "petter.fagerlund@gmail.com";
-            //double totalAmount = 100;
-            //var paymentOption = "swish";
-            //var deliveryOption = "dhl";
-            //var productName = "nike air"; 
-
-            //foreach (var item in orderItem.ToList())
-            //{
-            //    quantity = item.Quantity;
-            //    //product is not present ???
-            //    productName = item.Product.Name;
-
-            //    //Edit when user is availible
-            //    // email = item.Order.User.Email;
-
-            //    //Order items below is not present???
-
-            //    totalAmount = item.Order.TotalAmount;
-            //    paymentOption = item.Order.PaymentOption;
-            //    deliveryOption = item.Order.DeliveryOption;
-            //}
-
-
-
-            string to = email;
-            string subject = "Order Confirmation";
-            string body = purchaseConfirmation;
+            recipient = email;
+            subject = "Order Confirmation";
+            body = purchaseConfirmation;
             MailMessage mm = new MailMessage();
-            mm.To.Add(to);
+            mm.To.Add(recipient);
             mm.Subject = subject;
             mm.Body = body;
             mm.From = new MailAddress("omgzshoezz@gmail.com", "OMGZ Shoes");
@@ -214,10 +170,6 @@ namespace Webshop.Controllers
             smtp.Credentials = new System.Net.NetworkCredential("omgzshoezz@gmail.com", "OmgzOmgz123");
             smtp.Send(mm);
         }
-
-
-
     }
-
 }
 

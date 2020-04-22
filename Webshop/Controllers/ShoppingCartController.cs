@@ -13,6 +13,9 @@ namespace Webshop.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly WebshopContext _context;
+        private IQueryable<OrderItem> webshopContext;
+        private List<string> orderItems;
+        private List<OrderItem> orderItemToList;
 
         public ShoppingCartController(WebshopContext context)
         {
@@ -21,45 +24,16 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
-
-            List<string> orderItems = new List<string>();
+            webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+            orderItems = new List<string>();
+            orderItemToList = await webshopContext.ToListAsync();
 
             foreach (var item in webshopContext)
             {
                 orderItems.Add(item.OrderId.ToString());
             }
 
-            var x = orderItems;
-
-            TempData["Things"] = orderItems;
-
-
-            var orderItemToList = await webshopContext.ToListAsync();
-
-            
-
-            var productId = "";
-            var orderId = "";
-            var quantity = "";
-            var orderItemId = "";
-
-            //Listan Är NUL???????? Kan itne gå vidare
-
-            foreach (var item in orderItemToList)
-            {
-                productId = productId + "," + item.Product.Id.ToString();
-                orderId = orderId + "," + item.Order.Id.ToString();
-                quantity = quantity + "," + item.Quantity.ToString();
-                orderItemId = orderItemId + "," + item.OrderId.ToString(); 
-            }
-
-            ViewBag.productId = productId;
-            ViewBag.orderId = orderItemToList.Select(o => o.OrderId).FirstOrDefault();
-            ViewBag.quantity = quantity;
-            ViewBag.orderItemId = orderItemId;
-
-            ViewBag.orderItemsList = orderItems;
+            TempData["OrderItems"] = orderItems;
 
             return View(orderItemToList);
         }
