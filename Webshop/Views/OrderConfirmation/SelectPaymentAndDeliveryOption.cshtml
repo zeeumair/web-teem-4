@@ -2,8 +2,6 @@
 @Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
 
 
-
-
 <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
     <h2> Payment</h2>
 
@@ -14,11 +12,11 @@
 
     <h2>Delivery</h2>
     <label>2-5 days</label>
-    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="2-5 Days" onclick="ToggleDelivery()">
+    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="2-5 Days" onclick="ToggleDelivery2()">
     <label>5-10 days</label>
-    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="5-10 Days" onclick="ToggleDelivery2()">
+    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="5-10 Days" onclick="ToggleDelivery3()">
     <label>30 days</label>
-    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="30 Days" onclick="ToggleDelivery3()">
+    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="30 Days" onclick="ToggleDelivery1()">
     <br />
     <label>Total Price</label>
     <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
