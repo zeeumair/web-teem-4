@@ -13,6 +13,9 @@ namespace Webshop.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly WebshopContext _context;
+        private IQueryable<OrderItem> webshopContext;
+        private List<string> orderItems;
+        private List<OrderItem> orderItemToList;
 
         public ShoppingCartController(WebshopContext context)
         {
@@ -21,29 +24,18 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+            webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+            orderItems = new List<string>();
+            orderItemToList = await webshopContext.ToListAsync();
 
-            var orderItems = await webshopContext.ToListAsync();
-
-            var productId = "";
-            var orderId = "";
-            var quantity = "";
-            var orderItemId = "";
-
-            foreach (var item in orderItems)
+            foreach (var item in webshopContext)
             {
-                productId = productId + "," + item.Product.Id.ToString();
-                orderId = orderId + "," + item.Order.Id.ToString();
-                quantity = quantity + "," + item.Quantity.ToString();
-                orderItemId = orderItemId + "," + item.OrderId.ToString(); 
+                orderItems.Add(item.OrderId.ToString());
             }
 
-            ViewBag.productId = productId;
-            ViewBag.orderId = orderItems.Select(o => o.OrderId).FirstOrDefault();
-            ViewBag.quantity = quantity;
-            ViewBag.orderItemId = orderItemId;
+            TempData["OrderItems"] = orderItems;
 
-            return View(orderItems);
+            return View(orderItemToList);
         }
 
         public async Task<IActionResult> AddProductToCart(int id)
@@ -74,6 +66,7 @@ namespace Webshop.Controllers
                     });
             }
             await _context.SaveChangesAsync();
+
             return Redirect(Request.Headers["Referer"].ToString());
         }
 

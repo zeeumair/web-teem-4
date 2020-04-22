@@ -3,78 +3,10 @@
 
 
 
-<script type="text/javascript">
-    function ToggleDelivery() {
-        if (document.getElementById("twoToFiveDay").checked == true) {
-            document.getElementById("fiveToTenDays").disabled = true;
-            document.getElementById("thirtyDays").disabled = true;
-            if (
-                document.getElementById("swish").checked == true ||
-                document.getElementById("invoice").checked == true
-            ) {
-                document.getElementById("submit").disabled = false;
-            }
-        }
-        if (document.getElementById("twoToFiveDay").checked == false) {
-            document.getElementById("fiveToTenDays").disabled = false;
-            document.getElementById("thirtyDays").disabled = false;
-            document.getElementById("submit").disabled = true;
-        }
-
-    };
-    function ToggleDelivery2() {
-        if (document.getElementById("fiveToTenDays").checked == true) {
-            document.getElementById("twoToFiveDay").disabled = true;
-            document.getElementById("thirtyDays").disabled = true;
-            if (
-                document.getElementById("swish").checked == true ||
-                document.getElementById("invoice").checked == true
-            ) {
-                document.getElementById("submit").disabled = false;
-            }
-        }
-        if (document.getElementById("fiveToTenDays").checked == false) {
-            document.getElementById("twoToFiveDay").disabled = false;
-            document.getElementById("thirtyDays").disabled = false;
-            document.getElementById("submit").disabled = true;
-        }
-    }
-    function ToggleDelivery3() {
-
-        if (document.getElementById("thirtyDays").checked == true) {
-            document.getElementById("twoToFiveDay").disabled = true;
-            document.getElementById("fiveToTenDays").disabled = true;
-            if (
-                document.getElementById("swish").checked == true ||
-                document.getElementById("invoice").checked == true
-            ) {
-                document.getElementById("submit").disabled = false;
-            }
-        }
-        if (document.getElementById("thirtyDays").checked == false) {
-            document.getElementById("twoToFiveDay").disabled = false;
-            document.getElementById("fiveToTenDays").disabled = false;
-            document.getElementById("submit").disabled = true;
-        }
-    }
-    function TogglePayment() {
-        if (document.getElementById("invoice").checked == true) {
-            document.getElementById("swish").disabled = true;
-        } else if (document.getElementById("swish").checked == true) {
-            document.getElementById("invoice").disabled = true;
-        }
-        else if (document.getElementById("swish").checked == false) {
-            document.getElementById("invoice").disabled = false;
-        }
-        if (document.getElementById("invoice").checked == false) {
-            document.getElementById("swish").disabled = false;
-        }
-    }
-</script>
-
 
 <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
     <h2> Payment</h2>
+
     <label>Swish</label>
     <input type="checkbox" id="swish" name="paymentType" onclick="TogglePayment()" value="swish">
     <label>Invoice</label>
@@ -90,13 +22,11 @@
     <br />
     <label>Total Price</label>
     <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
-    <input type="text" name="productId" value="@ViewBag.productId" hidden />
-    <input type="text" name="orderId" value="@ViewBag.orderId" hidden />
-    <input type="text" name="orderItemId" value="@ViewBag.orderItemId" hidden />
-    <input type="text" name="quantity" value="@ViewBag.quantity" hidden />
 
+    <input type="submit" id="submit" value="Order" disabled />
 
-
-    <input type="submit" id="submit" value="Order" disabled/>
 </form>
 
+<script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="~/js/SelectPaymentAndDeliveryOptions.js"></script>
