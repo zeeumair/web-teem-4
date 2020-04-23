@@ -5,19 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
 {
     public class ShoppingCartController : Controller
     {
-        private readonly WebshopContext _context;
+        private readonly IdentityAppContext _context;
         private IQueryable<OrderItem> webshopContext;
         private List<string> orderItems;
         private List<OrderItem> orderItemToList;
 
-        public ShoppingCartController(WebshopContext context)
+        public ShoppingCartController(IdentityAppContext context)
         {
             _context = context;
         }

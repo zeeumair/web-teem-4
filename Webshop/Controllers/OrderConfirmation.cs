@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
@@ -15,7 +14,7 @@ namespace Webshop.Controllers
     public class OrderConfirmationController : Controller
     {
 
-        private readonly WebshopContext _context;
+        private readonly IdentityAppContext _context;
         private readonly IConfiguration _config;
         private string recipient;
         private string subject;
@@ -24,7 +23,7 @@ namespace Webshop.Controllers
         private IEnumerable<string> orderedItems;
         private IEnumerable<string> orderItems;
 
-        public OrderConfirmationController(WebshopContext context, IConfiguration config)
+        public OrderConfirmationController(IdentityAppContext context, IConfiguration config)
         {
             _context = context;
             _config = config;

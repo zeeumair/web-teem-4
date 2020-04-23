@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+<p>@ViewBag.Message</p>
+
+<div>
+
+    <a asp-controller="UserWithAuthentication" asp-action="Login">Login</a>
+
+    <form method="post" action="@Url.Action("AddNewUser", "UserWithAuthentication")">
+        <h2> Register </h2>
+
+        <label>Firstname</label>
+        <input type="text" id="firstName" name="firstName" required>
+        <label>Lastname</label>
+        <input type="text" id="lastName" name="lastName" required>
+        <label>Password</label>
+        <input type="text" id="password" name="password" required>
+        <label>StreetAddress</label>
+        <input type="text" id="streetAdress" name="streetAdress" required>
+        <label>Post number</label>
+        <input type="text" id="postNumber" name="postNumber" required>
+        <label>City</label>
+        <input type="text" id="city" name="city" required>
+        <label>Country</label>
+        <input type="text" id="country" name="country" required>
+        <label>Email</label>
+        <input type="text" id="email" name="email" required>
+        <label>Phone Number</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+        <input type="submit" id="submit" value="Register" />
+
+    </form>
+
+
+
+
+</div>
