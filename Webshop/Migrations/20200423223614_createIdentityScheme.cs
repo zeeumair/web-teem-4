@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Webshop.Migrations
 {
-    public partial class CreateIdentityScheme : Migration
+    public partial class createIdentityScheme : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

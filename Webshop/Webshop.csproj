@@ -7,6 +7,14 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200423142030_CreateIdentityScheme.cs" />
     <Compile Remove="Migrations\20200423142030_CreateIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423142547_CreateIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423142547_CreateIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423222719_createIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423222719_createIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423222911_createIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423222911_createIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423223152_createIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423223152_createIdentityScheme.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

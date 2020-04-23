@@ -10,8 +10,8 @@ using Webshop.Models;
 namespace Webshop.Migrations
 {
     [DbContext(typeof(IdentityAppContext))]
-    [Migration("20200423142547_CreateIdentityScheme")]
-    partial class CreateIdentityScheme
+    [Migration("20200423223614_createIdentityScheme")]
+    partial class createIdentityScheme
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

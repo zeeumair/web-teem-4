@@ -15,15 +15,11 @@ namespace Webshop.Controllers
 
         private SignInManager<User> SignInMgr { get; }
 
-        private readonly IdentityAppContext _context;
-        private User newUser;
-
         public UserWithAuthenticationController(UserManager<User> userManager,
-           SignInManager<User> signInManager, IdentityAppContext context)
+           SignInManager<User> signInManager)
         {
             UserMgr = userManager;
             SignInMgr = signInManager;
-            _context = context;
 
         }
 
@@ -34,25 +30,25 @@ namespace Webshop.Controllers
             return RedirectToAction("Index", "Products"); 
         }
 
-        public async Task<IActionResult> Login( string email, string password)
+        public IActionResult Login()
         {
-           var test =  _context.Users.Where(e => e.UserName == email);
-
-           var count = test.Count();
-
-
-            var result = await SignInMgr.PasswordSignInAsync(email, password, false, false);
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Login(User model)
+        {
+            var result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
 
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Products");
             }
-            else
-            {
-                ViewBag.Result = "result is: " + result.ToString(); 
-            }
 
-            return View(); 
+        
+            ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+
+
+            return View(model);
         }
 
         public IActionResult Register()
@@ -61,59 +57,31 @@ namespace Webshop.Controllers
         }
 
 
-        public async Task<IActionResult> AddNewUser(string firstName, string lastName, string password, string streetAdress, string postNumber, string city, string country, string email, string phoneNumber)
+        [HttpPost]
+        public async Task<IActionResult> Register(User model)
         {
+            var user = new User {
+                UserName = model.Email,
+                Email = model.Email,
+                City = model.City,
+                StreetAdress = model.StreetAdress,
+                PostNumber = model.PostNumber,
+                CreatedAt = DateTime.Now
+            };
+            var result = await UserMgr.CreateAsync(user, model.Password);
 
-            //ArgumentException: The key value at position 0 of the call to 'DbSet<User>.Find' was of type 'string', which does not match the property type of 'int'.
+            if (result.Succeeded)
+            {
+                await SignInMgr.SignInAsync(user, isPersistent: false);
+                return RedirectToAction("index", "Products");
+            }
 
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
 
-            var user = _context.Users.Find(email);
-
-                var x = user.Email; 
-
-
-                if (x != email)
-                {
-
-                    newUser = new User
-                    {                 
-                        FirstName = firstName,
-                        LastName = lastName,
-                        Password = password,
-                        StreetAdress = streetAdress,
-                        PostNumber = postNumber,
-                        City = city,
-                        Country = country,
-                        Email = email,
-                        PhoneNumber = phoneNumber
-                    };
-
-
-
-                    //IdentityResult result = await UserMgr.CreateAsync(user, user.Password);
-                     _context.Add(user);
-                    await _context.SaveChangesAsync();
-
-                    IdentityResult result = await UserMgr.CreateAsync(newUser, newUser.Password); 
-
-                    user.UserName = newUser.Email;
-
-                    await _context.SaveChangesAsync();
-
-
-                    return RedirectToAction("Login", "UserWithAuthentication", new { email = newUser.Email, password = newUser.Password });
-
-
-                }
-            
-         
-
-            ViewBag.Message = "Email is allready registered";
-
-
-            return RedirectToAction("Register", "UserWithAuthentication");  
+            return View(model);
         }
-
-
     }
 }
