@@ -15,11 +15,14 @@ namespace Webshop.Controllers
 
         private SignInManager<User> SignInMgr { get; }
 
+        private IdentityAppContext _context { get; set; } 
+
         public UserWithAuthenticationController(UserManager<User> userManager,
-           SignInManager<User> signInManager)
+           SignInManager<User> signInManager, IdentityAppContext identityAppContext)
         {
             UserMgr = userManager;
             SignInMgr = signInManager;
+            _context = identityAppContext; 
 
         }
 
@@ -35,10 +38,15 @@ namespace Webshop.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(User model)
+        public async Task<IActionResult> Login(User model, string totalPrice)
         {
             var result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
 
+
+            if (result.Succeeded && totalPrice != null)
+            {
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, user = model });
+            }
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Products");
@@ -58,18 +66,26 @@ namespace Webshop.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Register(User model)
+        public async Task<IActionResult> Register(User model, string totalPrice)
         {
             var user = new User {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 UserName = model.Email,
                 Email = model.Email,
                 City = model.City,
                 StreetAdress = model.StreetAdress,
                 PostNumber = model.PostNumber,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                PhoneNumber = model.PhoneNumber
             };
             var result = await UserMgr.CreateAsync(user, model.Password);
 
+            if (result.Succeeded && totalPrice != null)
+            {
+                
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, user = user });
+            }
             if (result.Succeeded)
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);

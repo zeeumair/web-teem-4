@@ -29,10 +29,23 @@ namespace Webshop.Controllers
             _config = config;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(int orderId,string totalprice)
+        public async Task<IActionResult> SelectPaymentAndDeliveryOption(string totalprice, User user)
         {
+            // user comes back null????
 
             orderItems = TempData["OrderItems"] as IEnumerable<string>;
+
+          var  orderItemIqueryable = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
+
+            foreach (var orderItemss in orderItemIqueryable)
+            {
+                if (orderedItems.Contains(orderItemss.OrderId.ToString()))
+                {
+                    orderItemss.Order.User = user;
+                    await _context.SaveChangesAsync();
+                }
+
+            }
 
             ViewBag.totalPrice = totalprice;
             ViewBag.orderId = orderId.ToString();
@@ -40,6 +53,12 @@ namespace Webshop.Controllers
             TempData["OrderedItems"] = orderItems;
 
             return View();
+        }
+
+        public IActionResult LoginOrRegister(string totalPrice)
+        {
+            ViewBag.totalPrice = totalPrice; 
+            return View(); 
         }
 
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
@@ -73,24 +92,6 @@ namespace Webshop.Controllers
             await _context.SaveChangesAsync();
 
             ReciveConfirmationViaEmail(orderItemsList);
-
-
-            ///----------> Andreas metoder?? <--------------------
-
-            //try
-            //{
-            //    var orderItems = await GetOrderItemsByOrder(orderId);
-            //    orderItems.ForEach(o => { o.Order.Confirmed = true; });
-
-            //    await _context.SaveChangesAsync();
-
-            //    return View(orderItems);
-            //}
-            //catch(Exception e)
-            //{
-
-            //    return NotFound(e.Message);
-            //}
 
             IQueryable<OrderItem> orderItemIqueryableForView;
             orderItemIqueryableForView = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
@@ -136,8 +137,7 @@ namespace Webshop.Controllers
 
             string purchaseConfirmation = "You successfully purchased: ";
 
-            //Edit when user is availible
-            var email = "omgzshoezz@gmail.com";
+            var email = "";
             double totalAmount = 0;
             var paymentOption = "";
             var deliveryOption = "";
@@ -148,8 +148,7 @@ namespace Webshop.Controllers
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
-                //Add user when user is availible
-
+                email = item.Order.User.Email; 
             }
 
             purchaseConfirmation = purchaseConfirmation + $"for the amount of ${totalAmount}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
