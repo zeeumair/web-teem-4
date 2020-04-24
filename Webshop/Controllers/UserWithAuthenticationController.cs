@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Models;
 
 namespace Webshop.Controllers
@@ -15,7 +16,9 @@ namespace Webshop.Controllers
 
         private SignInManager<User> SignInMgr { get; }
 
-        private IdentityAppContext _context { get; set; } 
+        private IdentityAppContext _context { get; set; }
+
+
 
         public UserWithAuthenticationController(UserManager<User> userManager,
            SignInManager<User> signInManager, IdentityAppContext identityAppContext)
@@ -45,7 +48,7 @@ namespace Webshop.Controllers
 
             if (result.Succeeded && totalPrice != null)
             {
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, user = model });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email});
             }
             if (result.Succeeded)
             {
@@ -58,6 +61,7 @@ namespace Webshop.Controllers
 
             return View(model);
         }
+
 
         public IActionResult Register()
         {

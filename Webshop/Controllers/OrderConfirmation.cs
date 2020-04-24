@@ -29,30 +29,34 @@ namespace Webshop.Controllers
             _config = config;
         }
 
-        public async Task<IActionResult> SelectPaymentAndDeliveryOption(string totalprice, User user)
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, string userEmail)
         {
-            // user comes back null????
-
-            orderItems = TempData["OrderItems"] as IEnumerable<string>;
-
-          var  orderItemIqueryable = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
-
-            foreach (var orderItemss in orderItemIqueryable)
-            {
-                if (orderedItems.Contains(orderItemss.OrderId.ToString()))
-                {
-                    orderItemss.Order.User = user;
-                    await _context.SaveChangesAsync();
-                }
-
-            }
+            SetUserToOrder(userEmail); 
 
             ViewBag.totalPrice = totalprice;
             ViewBag.orderId = orderId.ToString();
 
+            orderItems = TempData["OrderItems"] as IEnumerable<string>;
             TempData["OrderedItems"] = orderItems;
 
             return View();
+        }
+
+        public void SetUserToOrder(string userEmail)
+        {
+            orderItems = TempData["OrderItems"] as IEnumerable<string>;
+
+            var orderItemIqueryable = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
+            var user = _context.Users.Where(u => u.Email == userEmail).Single();
+
+            foreach (var item in orderItemIqueryable)
+            {
+                if (orderItems.Contains(item.OrderId.ToString()))
+                {
+                    item.Order.User = user;
+                    _context.SaveChangesAsync();
+                }
+            }
         }
 
         public IActionResult LoginOrRegister(string totalPrice)
