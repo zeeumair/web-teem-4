@@ -57,7 +57,10 @@
                     </div>
                 </td>
                 <td class="align-middle">
-                    <h2>@Math.Round(item.Product.Price * item.Quantity, 2)</h2>
+                    <h2>
+                        @CurrencyManager.CalcPrice(item.Product.Price * item.Quantity,
+                                     HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                    </h2>
                 </td>
             </tr>
                         }
@@ -65,7 +68,11 @@
     <tfoot>
         <tr>
             <td class="justify-content-center" colspan="4">
-                <h4 class="text-center">Total cost: @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2) SEK</h4>
+                <h4 class="text-center">
+                    Total cost: @CurrencyManager.CalcPrice(Model.Sum(p => p.Product.Price * p.Quantity),
+                                    HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                    @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
+                </h4>
             </td>
         </tr>
     </tfoot>
@@ -76,5 +83,5 @@
         classNames = @Model.Count() <= 0 ? "btn btn-danger disabled" : "btn btn-success";
     }
     @Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", 
-    new { totalprice = @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2).ToString() }, new { @class = $"btn {classNames}"})
+    new { totalprice = Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2).ToString() }, new { @class = $"btn {classNames}"})
 </Span>

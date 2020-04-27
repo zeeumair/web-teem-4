@@ -25,18 +25,24 @@ namespace Webshop.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Currency>>> GetCurrencies()
         {
+            if (String.IsNullOrEmpty(HttpContext.Session.GetString("currencyCode")))
+            {
+                HttpContext.Session.SetString("currencyCode", "SEK");
+                HttpContext.Session.SetString("currencyRate", "1");
+            }
             return await _context.Currencies.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> SetSelectedCurrency(int id)
+        public async Task SetSelectedCurrency(int id)
         {
-            var currencyData = await Task.Run(() => _context.Currencies.Where(c => c.Id == id).FirstOrDefault());
-
-            HttpContext.Session.SetString("currencyCode", currencyData.CurrencyCode);
-            HttpContext.Session.SetString("currencyRate", currencyData.CurrencyRate.ToString());
-
-            return Redirect(HttpContext.Request.Headers["Referer"].ToString());
+            await Task.Run(() => {
+                Console.WriteLine("inside async");
+                var currencyData =  _context.Currencies.Where(c => c.Id == id).FirstOrDefault();
+                HttpContext.Session.SetString("currencyCode", currencyData.CurrencyCode);
+                HttpContext.Session.SetString("currencyRate", currencyData.CurrencyRate.ToString());
+            });
+            Console.WriteLine("end of method");
         }
 
 

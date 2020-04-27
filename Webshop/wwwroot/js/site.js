@@ -16,6 +16,6 @@ $(document).ready(function () {
 });
 
 $("#currencyList").on("click", "li", function () {
-    $.get("https://localhost:44304/api/currencies/" + this.id);
-    location.reload();
+    $.get("https://localhost:44304/api/currencies/" + this.id)
+        .then(() => location.reload());
 });

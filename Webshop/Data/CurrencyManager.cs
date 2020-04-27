@@ -33,5 +33,12 @@ namespace Webshop
                 return null;
             }
         }
+
+        public static decimal CalcPrice(decimal basePrice, string rate)
+        {
+            if(rate != null)
+                return Math.Round(basePrice * decimal.Parse(rate), 2);
+            return Math.Round(basePrice, 2);
+        }
     }
 }
