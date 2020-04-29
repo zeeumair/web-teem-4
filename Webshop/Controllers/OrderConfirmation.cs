@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,9 +21,6 @@ namespace Webshop.Controllers
         private string recipient;
         private string subject;
         private string body;
-        private string orderId;
-        private IEnumerable<string> orderedItems;
-        private IEnumerable<string> orderItems;
 
         public OrderConfirmationController(WebshopContext context, IConfiguration config)
         {
@@ -30,79 +28,50 @@ namespace Webshop.Controllers
             _config = config;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(int orderId,string totalprice)
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice)
         {
-
-            orderItems = TempData["OrderItems"] as IEnumerable<string>;
-
             ViewBag.totalPrice = totalprice;
-            ViewBag.orderId = orderId.ToString();
-
-            TempData["OrderedItems"] = orderItems;
 
             return View();
         }
 
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
         {
-
-            orderedItems = TempData["OrderedItems"] as IEnumerable<string>;
-            orderId = "";
-
-            IQueryable<OrderItem> orderItemIqueryable;
-            orderItemIqueryable = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
-
-            List<OrderItem> orderItemsList = new List<OrderItem>();
-
-
-            foreach (var orderItemss in orderItemIqueryable)
+            var order = new Order
+            {
+                User = await _context.Users.FindAsync(1),
+                PaymentOption = paymentType,
+                TotalAmount = double.Parse(totalPrice),
+                DeliveryOption = deliveryTime,
+                Confirmed = true
+            };
+            var orderItems = new List<OrderItem>();
+            var cartItems = HttpContext.Session.GetString("cartItems");
+            foreach (var id in cartItems)
+            {
+                if(!orderItems.Any(oi => oi.Product.Id == int.Parse(id.ToString())))
                 {
-                    if(orderedItems.Contains(orderItemss.OrderId.ToString()))
-                    {
-                        orderItemss.Order.PaymentOption = paymentType;
-                        orderItemss.Order.DeliveryOption = deliveryTime;
-                        orderItemss.Order.TotalAmount = Convert.ToDouble(totalPrice);
-                        orderItemss.Order.Confirmed = true;
-                        
-                        orderId = orderItemss.OrderId.ToString(); 
-                        
-                        orderItemsList.Add(orderItemss);
-
-                    }
+                    orderItems.Add(
+                        new OrderItem
+                        {
+                            Order = order,
+                            Product = await _context.Products.FindAsync(int.Parse(id.ToString())),
+                            Quantity = cartItems.Count(p => p.ToString() == id.ToString())
+                        }
+                    );
                 }
+            }
 
             await _context.SaveChangesAsync();
 
-            ReciveConfirmationViaEmail(orderItemsList);
-
-
-            ///----------> Andreas metoder?? <--------------------
-
-            //try
-            //{
-            //    var orderItems = await GetOrderItemsByOrder(orderId);
-            //    orderItems.ForEach(o => { o.Order.Confirmed = true; });
-
-            //    await _context.SaveChangesAsync();
-
-            //    return View(orderItems);
-            //}
-            //catch(Exception e)
-            //{
-
-            //    return NotFound(e.Message);
-            //}
-
-            IQueryable<OrderItem> orderItemIqueryableForView;
-            orderItemIqueryableForView = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == Int32.Parse(orderId));
-
-
+            ReciveConfirmationViaEmail(orderItems);
             ViewBag.totalPrice = totalPrice;
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;
-            ViewBag.orderId = orderId;
+            ViewBag.orderId = order.Id;
+            HttpContext.Session.SetString("cartItems", "");
 
-            return View(orderItemIqueryableForView); 
+            return View(orderItems); 
         }  
 
         public async Task<ActionResult> DownloadConfirmationPdf(int orderId)
@@ -145,7 +114,7 @@ namespace Webshop.Controllers
 
             foreach (var item in orderItemsList)
             {
-                purchaseConfirmation = purchaseConfirmation + $"{item.Quantity} of {item.Product.Name}, ";
+                purchaseConfirmation += $"{item.Quantity} of {item.Product.Name}, ";
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
@@ -153,7 +122,7 @@ namespace Webshop.Controllers
 
             }
 
-            purchaseConfirmation = purchaseConfirmation + $"for the amount of ${totalAmount}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+            purchaseConfirmation += $"for the amount of ${totalAmount}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
             recipient = email;
             subject = "Order Confirmation";
             body = purchaseConfirmation;

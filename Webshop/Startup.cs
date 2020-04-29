@@ -26,6 +26,9 @@ namespace Webshop
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHttpContextAccessor();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
             services.AddDbContext<WebshopContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("WebshopContext")));
         }
@@ -45,7 +48,7 @@ namespace Webshop
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();
