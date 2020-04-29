@@ -37,19 +37,18 @@ namespace Webshop.Controllers
             return View(orderItemToList);
         }
 
-        public async Task<IActionResult> AddProductToCart(int id)
+        public async Task<IActionResult> AddProductToCart(int id, string userEmail)
         {
-            //var userId = 1;
-            //if (OrderItemExists(userId, id))
-            //{
-            //    var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Id == userId && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
-            //    orderItem.Quantity += 1;
-            //    await _context.SaveChangesAsync();
-            //}
-            //else
-            //{
+            if (OrderItemExists(userEmail, id))
+            {
+                var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Email == userEmail && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
+                orderItem.Quantity += 1;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
                 var product = await _context.Products.FindAsync(id);
-            //    var order = await _context.Orders.Where(o => o.User.Id == userId && !o.Confirmed).FirstOrDefaultAsync();
+               //var order = await _context.Orders.Where(o => o.User.Id == userId && !o.Confirmed).FirstOrDefaultAsync();
                 var newOrderItem = _context.OrderItems.Add(
                     new OrderItem
                     {
@@ -63,7 +62,7 @@ namespace Webshop.Controllers
                         Product = product,
                         Quantity = 1
                     });
-            //}
+            }
             await _context.SaveChangesAsync();
 
             return Redirect(Request.Headers["Referer"].ToString());
@@ -98,9 +97,9 @@ namespace Webshop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderItemExists(int userId, int id)
+        private bool OrderItemExists(string userEmail, int id)
         {
-            return _context.OrderItems.Any(e => e.Order.User.Id == userId && e.ProductId == id && !e.Order.Confirmed);
+            return _context.OrderItems.Any(e => e.Order.User.Email == userEmail && e.ProductId == id && !e.Order.Confirmed);
         }
     }
 }

@@ -49,8 +49,13 @@
                 @Html.DisplayFor(modelItem => item.Category)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                @Html.ActionLink("Add to Shopping Cart", "AddProductToCart", "ShoppingCart", new { id = item.Id }, null)
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+
+
+               
+
+                    @Html.ActionLink("Add to Shopping Cart", "AddProductToCart", "ShoppingCart", new { id = item.Id, userEmail = User.Identity.Name }, null)
+
             </td>
         </tr>
 }
