@@ -23,12 +23,27 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed /*&& u.Order.User.Id == 1*/); // Add filter on current User once we have a user login system
+            IQueryable<OrderItem> webshopContext = null;
+            var UnconfirmedOrderItemsUser = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Include(ou => ou.Order.User).Where(u => !u.Order.Confirmed && u.Order.User.Email == User.Identity.Name); // Add filter on current User once we have a user login system
+
+            if (User.Identity.IsAuthenticated && UnconfirmedOrderItemsUser != null)
+            {
+
+                    webshopContext = UnconfirmedOrderItemsUser;
+               
+            } 
+            if(User.Identity.IsAuthenticated || !User.Identity.IsAuthenticated)
+            {
+                webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed);
+
+            }
+           
+
             orderItems = new List<string>();
             orderItemToList = await webshopContext.ToListAsync();
 
             foreach (var item in webshopContext)
-            {
+            {               
                 orderItems.Add(item.OrderId.ToString());
             }
 
@@ -42,8 +57,13 @@ namespace Webshop.Controllers
             if (OrderItemExists(userEmail, id))
             {
                 var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Email == userEmail && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
-                orderItem.Quantity += 1;
-                await _context.SaveChangesAsync();
+
+                if (orderItem != null)
+                {
+                    orderItem.Quantity += 1;
+                    await _context.SaveChangesAsync();
+                }
+                
             }
             else
             {
@@ -54,6 +74,7 @@ namespace Webshop.Controllers
                     {
                         Order = new Order
                         {
+                            Confirmed = false,
                             //User = await _context.Users.FindAsync(userId),
                             PaymentOption = "",
                             TotalAmount = 0,

@@ -54,7 +54,7 @@
 @Html.ActionLink("ShopMore", "Index", "/", null, null)
 @Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = ViewBag.orderId }, null)
 
-<h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
+<h1>Totalt Betalt @ViewBag.totalPrice @ViewBag.currency, betalt via @ViewBag.paymentType</h1>
 <p>
     Your order will be delivered to you within: @ViewBag.delivery.
 </p>

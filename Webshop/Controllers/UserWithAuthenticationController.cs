@@ -48,7 +48,7 @@ namespace Webshop.Controllers
 
             if (result.Succeeded && totalPrice != null)
             {
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email});
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency});
             }
             if (result.Succeeded)
             {
@@ -81,7 +81,8 @@ namespace Webshop.Controllers
                 StreetAdress = model.StreetAdress,
                 PostNumber = model.PostNumber,
                 CreatedAt = DateTime.Now,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                Currency = model.Currency
             };
             var result = await UserMgr.CreateAsync(user, model.Password);
 
@@ -89,7 +90,7 @@ namespace Webshop.Controllers
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);
 
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency });
             }
             if (result.Succeeded)
             {

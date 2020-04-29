@@ -28,9 +28,10 @@ namespace Webshop.Controllers
             _config = config;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, string userEmail)
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, string userEmail, string currency)
         {
             ViewBag.totalPrice = totalprice;
+            ViewBag.currency = currency;
 
             orderItems = TempData["OrderItems"] as IEnumerable<string>;
             TempData["OrderedItems"] = orderItems;
@@ -46,7 +47,7 @@ namespace Webshop.Controllers
             return View(); 
         }
 
-        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
+        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string selectedCurrency)
         {
 
             var orderedItems = TempData["OrderedItems"] as IEnumerable<string>;
@@ -68,7 +69,8 @@ namespace Webshop.Controllers
                         orderItem.Order.DeliveryOption = deliveryTime;
                         orderItem.Order.TotalAmount = Convert.ToDouble(totalPrice);
                         orderItem.Order.Confirmed = true;
-                        
+
+                        currentUser.Currency = selectedCurrency; 
                         orderId = orderItem.OrderId.ToString(); 
                         
                         orderItemsList.Add(orderItem);
@@ -84,6 +86,7 @@ namespace Webshop.Controllers
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;
             ViewBag.orderId = orderId;
+            ViewBag.currency = selectedCurrency; 
 
             return View(orderItemsList); 
         }  
@@ -124,6 +127,7 @@ namespace Webshop.Controllers
             double totalAmount = 0;
             var paymentOption = "";
             var deliveryOption = "";
+            var currency = "";
 
             foreach (var item in orderItemsList)
             {
@@ -131,10 +135,11 @@ namespace Webshop.Controllers
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
-                email = item.Order.User.Email; 
+                email = item.Order.User.Email;
+                currency = item.Order.User.Currency; 
             }
 
-            purchaseConfirmation = purchaseConfirmation + $"for the amount of ${totalAmount}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+            purchaseConfirmation = purchaseConfirmation + $"for the amount of {totalAmount} {currency} via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
             recipient = email;
             subject = "Order Confirmation";
             body = purchaseConfirmation;

@@ -2,28 +2,41 @@
 @Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
 
 
-<form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
-    <h2> Payment</h2>
+    <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
+        <label>Payment Type</label>
 
-    <label>Swish</label>
-    <input type="checkbox" id="swish" name="paymentType" onclick="TogglePayment()" value="swish">
-    <label>Invoice</label>
-    <input type="checkbox" id="invoice" name="paymentType" onclick="TogglePayment()" value="invoice">
+        <select id="paymentType" name="paymentType">
+            <option value="Swish">Swish</option>
+            <option value="Invoice">Invoice</option>
+        </select>
+        <br />
 
-    <h2>Delivery</h2>
-    <label>2-5 days</label>
-    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="2-5 Days" onclick="ToggleDelivery2()">
-    <label>5-10 days</label>
-    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="5-10 Days" onclick="ToggleDelivery3()">
-    <label>30 days</label>
-    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="30 Days" onclick="ToggleDelivery1()">
-    <br />
-    <label>Total Price</label>
-    <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
+        <label>Delivery Time</label>
 
-    <input type="submit" id="submit" value="Order" disabled />
+        <select id="deliveryTime" name="deliveryTime">
+            <option value="twoToFiveDay">2-5 Days</option>
+            <option value="fiveToTenDays">5-10 Days</option>
+            <option value="thirtyDays">30 Days</option>
+        </select>
 
-</form>
+        <br />
+
+        <label>Total Price</label> <p>@ViewBag.totalPrice @ViewBag.currency </p>
+
+        <label>Change Currency</label>
+        
+        <select id="selectedCurrency" name="selectedCurrency">
+            <option value="Sek">Sek</option>
+            <option value="Euro">Euro</option>
+            <option value="Pounds">Pounds</option>
+            <option value="USD">USD</option>
+        </select>
+        
+        <br />
+
+        <input type="submit" id="submit" value="Order" />
+
+    </form>
 
 <script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
