@@ -49,19 +49,19 @@ namespace Webshop.Controllers
             var cartItems = HttpContext.Session.GetString("cartItems");
             foreach (var id in cartItems)
             {
-                if(!orderItems.Any(oi => oi.Product.Id == int.Parse(id.ToString())))
+                if (!orderItems.Exists(oi => oi.Product.Id == id - '0'))
                 {
                     orderItems.Add(
                         new OrderItem
                         {
                             Order = order,
-                            Product = await _context.Products.FindAsync(int.Parse(id.ToString())),
+                            Product = await _context.Products.FindAsync(id - '0'),
                             Quantity = cartItems.Count(p => p.ToString() == id.ToString())
                         }
                     );
                 }
             }
-
+            await _context.AddRangeAsync(orderItems);
             await _context.SaveChangesAsync();
 
             ReciveConfirmationViaEmail(orderItems);
@@ -78,7 +78,7 @@ namespace Webshop.Controllers
         {
             try
             {
-                var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId, true));
+                var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId));
                 return File(dataStream, "application/pdf", "OrderConfirmation.pdf");
             }
             catch (Exception e)
@@ -88,9 +88,9 @@ namespace Webshop.Controllers
             }
         }
 
-        public async Task<List<OrderItem>> GetOrderItemsByOrder(int orderId, bool includeConfirmed = false)
+        public async Task<List<OrderItem>> GetOrderItemsByOrder(int orderId)
         {
-            var orderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == orderId && o.Order.Confirmed == includeConfirmed);
+            var orderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == orderId);
             if(orderId <= 0 || orderItems.Count() <= 0)
             {
                 throw new Exception("Could not find your Order.");

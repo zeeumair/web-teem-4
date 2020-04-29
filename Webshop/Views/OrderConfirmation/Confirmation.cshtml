@@ -5,7 +5,7 @@
 }
 
 <p>
-    Your confirmation number is: @ViewBag.orderId
+    Your confirmation number is: @Model.Select(o => o.Order.Id).FirstOrDefault()
 </p>
 <table>
     <thead>
@@ -54,9 +54,9 @@
 @Html.ActionLink("ShopMore", "Index", "/", null, null)
 @Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = ViewBag.orderId }, null)
 
-<h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @ViewBag.paymentType</h1>
+<h1>Totalt Betalt @ViewBag.totalPrice KR, betalt via @Model.Select(o => o.Order.PaymentOption).FirstOrDefault()</h1>
 <p>
-    Your order will be delivered to you within: @ViewBag.delivery.
+    Your order will be delivered to you within: @Model.Select(o => o.Order.DeliveryOption).FirstOrDefault().
 </p>
 <p>
     This confirmation has also been sent to your email! 
