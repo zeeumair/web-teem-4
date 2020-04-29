@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly WebshopContext _context;
+        private readonly IdentityAppContext _context;
 
-        public ProductsController(WebshopContext context)
+        public ProductsController(IdentityAppContext context)
         {
             _context = context;
         }

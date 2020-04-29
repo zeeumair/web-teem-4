@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Webshop.Data;
+using Webshop.Models;
 
 namespace Webshop.Migrations
 {
-    [DbContext(typeof(WebshopContext))]
+    [DbContext(typeof(IdentityAppContext))]
     [Migration("20200413114629_ModelUpdate")]
     partial class ModelUpdate
     {

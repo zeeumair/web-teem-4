@@ -75,6 +75,6 @@
         string classNames;
         classNames = @Model.Count() <= 0 ? "btn btn-danger disabled" : "btn btn-success";
     }
-    @Html.ActionLink("Confirm Order", "SelectPaymentAndDeliveryOption", "OrderConfirmation", 
+    @Html.ActionLink("Confirm Order", "LoginOrRegister", "OrderConfirmation", 
     new { totalprice = @Math.Round(Model.Sum(p => p.Product.Price * p.Quantity), 2).ToString() }, new { @class = $"btn {classNames}"})
 </Span>
