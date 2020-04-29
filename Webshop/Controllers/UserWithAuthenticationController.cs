@@ -87,13 +87,16 @@ namespace Webshop.Controllers
 
             if (result.Succeeded && totalPrice != null)
             {
-                
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, user = user });
+                await SignInMgr.SignInAsync(user, isPersistent: false);
+
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email });
             }
             if (result.Succeeded)
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("index", "Products");
+
+                return RedirectToAction("Index", "Products");
+
             }
 
             foreach (var error in result.Errors)
