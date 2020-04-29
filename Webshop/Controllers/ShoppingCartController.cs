@@ -23,7 +23,7 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed && u.Order.User.Id == 1); // Add filter on current User once we have a user login system
+            webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed /*&& u.Order.User.Id == 1*/); // Add filter on current User once we have a user login system
             orderItems = new List<string>();
             orderItemToList = await webshopContext.ToListAsync();
 
@@ -39,23 +39,23 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> AddProductToCart(int id)
         {
-            var userId = 1;
-            if (OrderItemExists(userId, id))
-            {
-                var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Id == userId && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
-                orderItem.Quantity += 1;
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
+            //var userId = 1;
+            //if (OrderItemExists(userId, id))
+            //{
+            //    var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Id == userId && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
+            //    orderItem.Quantity += 1;
+            //    await _context.SaveChangesAsync();
+            //}
+            //else
+            //{
                 var product = await _context.Products.FindAsync(id);
-                var order = await _context.Orders.Where(o => o.User.Id == userId && !o.Confirmed).FirstOrDefaultAsync();
+            //    var order = await _context.Orders.Where(o => o.User.Id == userId && !o.Confirmed).FirstOrDefaultAsync();
                 var newOrderItem = _context.OrderItems.Add(
                     new OrderItem
                     {
-                        Order = order ?? new Order
+                        Order = new Order
                         {
-                            User = await _context.Users.FindAsync(userId),
+                            //User = await _context.Users.FindAsync(userId),
                             PaymentOption = "",
                             TotalAmount = 0,
                             DeliveryOption = ""
@@ -63,7 +63,7 @@ namespace Webshop.Controllers
                         Product = product,
                         Quantity = 1
                     });
-            }
+            //}
             await _context.SaveChangesAsync();
 
             return Redirect(Request.Headers["Referer"].ToString());
