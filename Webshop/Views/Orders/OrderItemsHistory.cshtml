@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Webshop.Models.OrderItem>
+
+@{
+    ViewData["Title"] = "Order Items History";
+}
+
+    <h1>Order History, @Html.DisplayNameFor(model => model.OrderId) : @ViewBag.OrderId</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                Give Stars
+            </th>
+            <th>
+                Write Review 
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                ******
+            </td>
+            <td>
+                <input />
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -30,7 +30,7 @@ namespace Webshop.Controllers
             _config = config;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(int orderId,string totalprice)
+        public IActionResult SelectPaymentAndDeliveryOption(int orderId, string totalprice)
         {
 
             orderItems = TempData["OrderItems"] as IEnumerable<string>;
