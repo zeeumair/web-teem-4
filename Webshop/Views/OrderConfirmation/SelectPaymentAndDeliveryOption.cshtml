@@ -18,8 +18,8 @@
     <label>30 days</label>
     <input type="checkbox" id="thirtyDays" name="deliveryTime" value="30 Days" onclick="ToggleDelivery1()">
     <br />
-    <label>Total Price</label>
-    <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
+    <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
+    <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
     <input type="submit" id="submit" value="Order" disabled />
 
