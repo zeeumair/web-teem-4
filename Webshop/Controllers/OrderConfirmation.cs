@@ -28,13 +28,17 @@ namespace Webshop.Controllers
             _config = config;
         }
 
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public IActionResult SelectPaymentAndDeliveryOption(string totalprice)
         {
+            if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
+                return RedirectToAction("index", "Products");
             ViewBag.totalPrice = totalprice;
 
             return View();
         }
 
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
         {
             var order = new Order
