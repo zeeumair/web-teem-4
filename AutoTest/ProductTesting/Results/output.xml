@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.1.2 (Python 3.8.1 on win32)" generated="20200424 20:44:46.206" rpa="false">
+<suite id="s1" name="Tests" source="C:\Users\zeeum\source\repos\Agile-Project-Team4\web-teem-4\AutoTest\ProductTesting\Tests">
+<suite id="s1-s1" name="Test1" source="C:\Users\zeeum\source\repos\Agile-Project-Team4\web-teem-4\AutoTest\ProductTesting\Tests\Test1.robot">
+<kw name="Begin Web Test" library="Keywords" type="setup">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<arguments>
+<arg>about:blank</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20200424 20:44:47.282" level="INFO">Opening browser 'chrome' to base url 'about:blank'.</msg>
+<status status="PASS" starttime="20200424 20:44:47.281" endtime="20200424 20:44:53.137"></status>
+</kw>
+<kw name="Set Selenium Speed" library="SeleniumLibrary">
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<arguments>
+<arg>0.8</arg>
+</arguments>
+<status status="PASS" starttime="20200424 20:44:53.138" endtime="20200424 20:44:53.140"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:44:47.279" endtime="20200424 20:44:53.143"></status>
+</kw>
+<test id="s1-s1-t1" name="User can access Webshop site">
+<kw name="Go to Web Page" library="Keywords">
+<kw name="Load page" library="Keywords">
+<kw name="Go To" library="SeleniumLibrary">
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<arguments>
+<arg>${URL}</arg>
+</arguments>
+<msg timestamp="20200424 20:44:53.150" level="INFO">Opening url 'https://localhost:44304/'</msg>
+<status status="PASS" starttime="20200424 20:44:53.149" endtime="20200424 20:44:55.705"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:44:53.149" endtime="20200424 20:44:55.705"></status>
+</kw>
+<kw name="Maximize Browser Window" library="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" starttime="20200424 20:44:55.705" endtime="20200424 20:45:00.673"></status>
+</kw>
+<kw name="Verify startpage loaded" library="Keywords">
+<kw name="Get Text" library="SeleniumLibrary">
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<arguments>
+<arg>class:navbar-brand</arg>
+</arguments>
+<assign>
+<var>${link_text}</var>
+</assign>
+<msg timestamp="20200424 20:45:02.383" level="INFO">${link_text} = Webshop</msg>
+<status status="PASS" starttime="20200424 20:45:00.675" endtime="20200424 20:45:02.385"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${link_text}</arg>
+<arg>Webshop</arg>
+</arguments>
+<status status="PASS" starttime="20200424 20:45:02.386" endtime="20200424 20:45:02.388"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:45:00.674" endtime="20200424 20:45:02.389"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:44:53.148" endtime="20200424 20:45:02.389"></status>
+</kw>
+<doc>See if page is accessable and can load correctly</doc>
+<tags>
+<tag>Test 1</tag>
+</tags>
+<status status="PASS" starttime="20200424 20:44:53.143" endtime="20200424 20:45:02.391" critical="yes"></status>
+</test>
+<test id="s1-s1-t2" name="User should be able list of all products">
+<kw name="Click Element" library="SeleniumLibrary">
+<doc>Click the element identified by ``locator``.</doc>
+<arguments>
+<arg>xpath:/html/body/header/nav/div/a</arg>
+</arguments>
+<msg timestamp="20200424 20:45:02.403" level="INFO">Clicking element 'xpath:/html/body/header/nav/div/a'.</msg>
+<status status="PASS" starttime="20200424 20:45:02.402" endtime="20200424 20:45:04.555"></status>
+</kw>
+<doc>Test: The user should be able to see all products when click on webshop</doc>
+<tags>
+<tag>Product List</tag>
+</tags>
+<status status="PASS" starttime="20200424 20:45:02.397" endtime="20200424 20:45:04.556" critical="yes"></status>
+</test>
+<test id="s1-s1-t3" name="User can see Product Details">
+<kw name="Product Details" library="Keywords">
+<kw name="Click Link" library="SeleniumLibrary">
+<doc>Clicks a link identified by ``locator``.</doc>
+<arguments>
+<arg>Link:Details</arg>
+</arguments>
+<msg timestamp="20200424 20:45:04.570" level="INFO">Clicking link 'Link:Details'.</msg>
+<status status="PASS" starttime="20200424 20:45:04.569" endtime="20200424 20:45:16.354"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:45:04.568" endtime="20200424 20:45:16.356"></status>
+</kw>
+<kw name="Verify Details Product Page" library="Keywords">
+<kw name="Get Text" library="SeleniumLibrary">
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<arguments>
+<arg>xpath:/html/body/div/main/div[2]/a[1]</arg>
+</arguments>
+<assign>
+<var>${link_text}</var>
+</assign>
+<msg timestamp="20200424 20:45:18.190" level="INFO">${link_text} = Back to List</msg>
+<status status="PASS" starttime="20200424 20:45:16.496" endtime="20200424 20:45:18.190"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${link_text}</arg>
+<arg>Back to List</arg>
+</arguments>
+<status status="PASS" starttime="20200424 20:45:18.191" endtime="20200424 20:45:18.192"></status>
+</kw>
+<kw name="Click Element" library="SeleniumLibrary">
+<doc>Click the element identified by ``locator``.</doc>
+<arguments>
+<arg>Xpath:/html/body/div/main/div[2]/a[1]</arg>
+</arguments>
+<msg timestamp="20200424 20:45:18.193" level="INFO">Clicking element 'Xpath:/html/body/div/main/div[2]/a[1]'.</msg>
+<status status="PASS" starttime="20200424 20:45:18.193" endtime="20200424 20:45:20.369"></status>
+</kw>
+<kw name="Get Text" library="SeleniumLibrary">
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<arguments>
+<arg>xpath:/html/body/div/main/table/thead/tr/th[4]</arg>
+</arguments>
+<assign>
+<var>${link_text}</var>
+</assign>
+<msg timestamp="20200424 20:45:22.083" level="INFO">${link_text} = Description</msg>
+<status status="PASS" starttime="20200424 20:45:20.370" endtime="20200424 20:45:22.084"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${link_text}</arg>
+<arg>Description</arg>
+</arguments>
+<status status="PASS" starttime="20200424 20:45:22.085" endtime="20200424 20:45:22.087"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:45:16.495" endtime="20200424 20:45:22.087"></status>
+</kw>
+<doc>Test: The user should be able to see product Information</doc>
+<tags>
+<tag>Product Information</tag>
+</tags>
+<status status="PASS" starttime="20200424 20:45:04.564" endtime="20200424 20:45:22.089" critical="yes"></status>
+</test>
+<test id="s1-s1-t4" name="User can add Products in Shopping Cart from Product List">
+<kw name="Verify Adding Products in Shopping Cart" library="Keywords">
+<kw name="Click Element" library="SeleniumLibrary">
+<doc>Click the element identified by ``locator``.</doc>
+<arguments>
+<arg>xpath:/html/body/div/main/table/tbody/tr[1]/td[6]/a[2]</arg>
+</arguments>
+<msg timestamp="20200424 20:45:22.101" level="INFO">Clicking element 'xpath:/html/body/div/main/table/tbody/tr[1]/td[6]/a[2]'.</msg>
+<status status="PASS" starttime="20200424 20:45:22.100" endtime="20200424 20:45:24.300"></status>
+</kw>
+<kw name="Click Link" library="SeleniumLibrary">
+<doc>Clicks a link identified by ``locator``.</doc>
+<arguments>
+<arg>Link:Shopping Cart</arg>
+</arguments>
+<msg timestamp="20200424 20:45:24.301" level="INFO">Clicking link 'Link:Shopping Cart'.</msg>
+<status status="PASS" starttime="20200424 20:45:24.300" endtime="20200424 20:45:27.246"></status>
+</kw>
+<kw name="Get Text" library="SeleniumLibrary">
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<arguments>
+<arg>xpath:/html/body/div/main/span/a</arg>
+</arguments>
+<assign>
+<var>${link_text}</var>
+</assign>
+<msg timestamp="20200424 20:45:28.946" level="INFO">${link_text} = Confirm Order</msg>
+<status status="PASS" starttime="20200424 20:45:27.247" endtime="20200424 20:45:28.946"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${link_text}</arg>
+<arg>Confirm Order</arg>
+</arguments>
+<status status="PASS" starttime="20200424 20:45:28.948" endtime="20200424 20:45:28.949"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:45:22.099" endtime="20200424 20:45:28.950"></status>
+</kw>
+<doc>Test: The user should be able to add products in shopping cart</doc>
+<tags>
+<tag>Adding product</tag>
+</tags>
+<status status="PASS" starttime="20200424 20:45:22.094" endtime="20200424 20:45:28.952" critical="yes"></status>
+</test>
+<kw name="End Web Test" library="Keywords" type="teardown">
+<kw name="Close Browser" library="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" starttime="20200424 20:45:28.960" endtime="20200424 20:45:32.060"></status>
+</kw>
+<status status="PASS" starttime="20200424 20:45:28.959" endtime="20200424 20:45:32.060"></status>
+</kw>
+<doc>This is some basic info about the whole Webshop test suite</doc>
+<status status="PASS" starttime="20200424 20:44:46.322" endtime="20200424 20:45:32.060"></status>
+</suite>
+<status status="PASS" starttime="20200424 20:44:46.216" endtime="20200424 20:45:32.087"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="0">Critical Tests</stat>
+<stat pass="4" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0">Adding product</stat>
+<stat pass="1" fail="0">Product Information</stat>
+<stat pass="1" fail="0">Product List</stat>
+<stat pass="1" fail="0">Test 1</stat>
+</tag>
+<suite>
+<stat pass="4" fail="0" id="s1" name="Tests">Tests</stat>
+<stat pass="4" fail="0" id="s1-s1" name="Test1">Tests.Test1</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
