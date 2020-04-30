@@ -43,7 +43,7 @@ namespace Webshop.Controllers
             return View();
         }
 
-        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
+        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
 
             orderedItems = TempData["OrderedItems"] as IEnumerable<string>;
@@ -73,7 +73,7 @@ namespace Webshop.Controllers
 
             await _context.SaveChangesAsync();
 
-            ReciveConfirmationViaEmail(orderItemsList);
+            ReciveConfirmationViaEmail(orderItemsList, email);
 
 
             ///----------> Andreas metoder?? <--------------------
@@ -132,13 +132,13 @@ namespace Webshop.Controllers
             }
         }
 
-        public void ReciveConfirmationViaEmail(List<OrderItem> orderItemsList)
+        public void ReciveConfirmationViaEmail(List<OrderItem> orderItemsList, string inputEmail)
         {       
 
             string purchaseConfirmation = "You successfully purchased: ";
 
             //Edit when user is availible
-            var email = "omgzshoezz@gmail.com";
+            var email = inputEmail ?? "omgzshoezz@gmail.com";
             double totalAmount = 0;
             var paymentOption = "";
             var deliveryOption = "";
