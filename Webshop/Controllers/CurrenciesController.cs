@@ -37,12 +37,10 @@ namespace Webshop.Controllers
         public async Task SetSelectedCurrency(int id)
         {
             await Task.Run(() => {
-                Console.WriteLine("inside async");
                 var currencyData =  _context.Currencies.Where(c => c.Id == id).FirstOrDefault();
                 HttpContext.Session.SetString("currencyCode", currencyData.CurrencyCode);
                 HttpContext.Session.SetString("currencyRate", currencyData.CurrencyRate.ToString());
             });
-            Console.WriteLine("end of method");
         }
 
 

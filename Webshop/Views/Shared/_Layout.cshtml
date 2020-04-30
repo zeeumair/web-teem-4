@@ -24,7 +24,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Shopping Cart</a>
                         </li>
-                        <li>
+                        <li class="scrollableCollapse">
                             <a class="btn btn-secondary" role="button" data-toggle="collapse" href="#currencyListContainer">
                                 @{
                                     if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
@@ -38,10 +38,9 @@
                                 }
                             </a>
                             <div id="currencyListContainer" class="collapse">
-                                <ul id="currencyList" class="list-group scrollableCollapse">
+                                <ul id="currencyList" class="list-group">
                                 </ul>
                             </div>
-
                         </li>
                     </ul>
                 </div>
