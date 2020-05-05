@@ -38,7 +38,7 @@ namespace Webshop.Controllers
         public async Task<IActionResult> OrderItemsHistory(int id)
         {
             ViewBag.OrderId = id;
-            return View(await _context.OrderItems.Where(x => x.Order.Id == id).ToListAsync());
+            return View(await _context.OrderItems.Where(x => x.Order.Id == id).Include("Product").ToListAsync());
         }
     }
 }

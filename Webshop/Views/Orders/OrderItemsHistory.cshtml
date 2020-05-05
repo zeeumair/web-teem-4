@@ -10,16 +10,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProductId)
+                @Html.DisplayNameFor(model => model.Product.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product.Description)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                Give Stars
+                Give Stars (In development)
             </th>
             <th>
-                Write Review 
+                Write Review (In development)
             </th>
         </tr>
     </thead>
@@ -27,16 +33,26 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductId)
+                @Html.DisplayFor(modelItem => item.Product.Name)
+            </td>
+            <td>
+                @{
+                    var base64 = Convert.ToBase64String(item.Product.Image);
+                    var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                }
+                <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                ****** <!-- This is where the input for stars goes-->
+                <!-- This is where the input for stars goes-->
             </td>
             <td>
-                <input /> <!-- This is where the input for text goes--> 
+                <!-- This is where the input for text goes-->
             </td>
         </tr>
 }
