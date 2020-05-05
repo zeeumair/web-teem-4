@@ -39,7 +39,7 @@ namespace Webshop.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime)
+        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
             var order = new Order
             {
@@ -68,7 +68,7 @@ namespace Webshop.Controllers
             await _context.AddRangeAsync(orderItems);
             await _context.SaveChangesAsync();
 
-            ReciveConfirmationViaEmail(orderItems);
+            ReciveConfirmationViaEmail(orderItems, email);
             ViewBag.totalPrice = totalPrice;
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;

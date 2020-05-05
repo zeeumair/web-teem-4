@@ -22,8 +22,8 @@
     <input type="email" name="email" />
     <label>(Leave blank to use your registered address)</label>
     <br />
-    <label>Total Price</label>
-    <input type="text" name="totalPrice" value="@ViewBag.totalPrice" readonly />
+    <label>Total Price: @ViewBag.totalPrice</label>
+    <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
     <input type="submit" id="submit" value="Order" disabled />
 
