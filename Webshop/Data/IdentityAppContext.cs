@@ -1,16 +1,4 @@
-﻿
-
-
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Webshop.Models
@@ -18,7 +6,7 @@ namespace Webshop.Models
     public class IdentityAppContext : IdentityDbContext<User, AppRole, int>
     {
 
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
 
         public DbSet<Order> Orders { get; set; }
 
