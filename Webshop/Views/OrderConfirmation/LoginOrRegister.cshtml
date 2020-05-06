@@ -24,13 +24,16 @@
             </div>
 
             <div>
-                <input type="text" name="totalPrice" value="@ViewBag.totalPrice" hidden/>
+                <input type="text" name="totalPrice" value="@ViewBag.totalPrice" hidden />
             </div>
 
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+        <div>
+            <a asp-action="ForgotPassword" asp-controller="UserWithAuthentication">Forgot Password</a>
+        </div>
     </div>
 </div>
 
