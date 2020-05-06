@@ -53,13 +53,16 @@ namespace Webshop.Controllers
             var cartItems = HttpContext.Session.GetString("cartItems");
             foreach (var id in cartItems)
             {
-                orderItems.Add(
+                if (!orderItems.Select(p => p.Product.Id == id - '0').Any())
+                {
+                    orderItems.Add(
                     new OrderItem
                     {
                         Order = order,
                         Product = await _context.Products.FindAsync(id - '0'),
                         Quantity = cartItems.Count(p => p.ToString() == id.ToString())
                     });
+                }
             }
             await _context.AddRangeAsync(orderItems);
             await _context.SaveChangesAsync();
