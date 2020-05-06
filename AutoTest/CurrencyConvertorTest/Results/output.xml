@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.1.2 (Python 3.8.1 on win32)" generated="20200505 21:59:27.770" rpa="false">
+<suite id="s1" name="Tests" source="C:\Users\zeeum\source\repos\Agile-Project-Team4\web-teem-4\AutoTest\CurrencyConvertorTest\Tests">
+<suite id="s1-s1" name="CurrencyCheck" source="C:\Users\zeeum\source\repos\Agile-Project-Team4\web-teem-4\AutoTest\CurrencyConvertorTest\Tests\CurrencyCheck.robot">
+<kw name="Begin Web Test" library="Keywords" type="setup">
+<kw name="Open Browser" library="SeleniumLibrary">
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<arguments>
+<arg>about:blank</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20200505 21:59:28.629" level="INFO">Opening browser 'chrome' to base url 'about:blank'.</msg>
+<status status="PASS" starttime="20200505 21:59:28.628" endtime="20200505 21:59:34.831"></status>
+</kw>
+<kw name="Set Selenium Speed" library="SeleniumLibrary">
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<arguments>
+<arg>0.8</arg>
+</arguments>
+<status status="PASS" starttime="20200505 21:59:34.832" endtime="20200505 21:59:34.835"></status>
+</kw>
+<status status="PASS" starttime="20200505 21:59:28.625" endtime="20200505 21:59:34.835"></status>
+</kw>
+<test id="s1-s1-t1" name="User can access Webshop site">
+<kw name="Go to Web Page" library="Keywords">
+<kw name="Load page" library="Keywords">
+<kw name="Go To" library="SeleniumLibrary">
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<arguments>
+<arg>${URL}</arg>
+</arguments>
+<msg timestamp="20200505 21:59:34.847" level="INFO">Opening url 'https://localhost:44304/'</msg>
+<status status="PASS" starttime="20200505 21:59:34.846" endtime="20200505 21:59:36.243"></status>
+</kw>
+<status status="PASS" starttime="20200505 21:59:34.844" endtime="20200505 21:59:36.243"></status>
+</kw>
+<kw name="Maximize Browser Window" library="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" starttime="20200505 21:59:36.244" endtime="20200505 21:59:41.235"></status>
+</kw>
+<kw name="Verify startpage loaded" library="Keywords">
+<kw name="Get Text" library="SeleniumLibrary">
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<arguments>
+<arg>class:navbar-brand</arg>
+</arguments>
+<assign>
+<var>${link_text}</var>
+</assign>
+<msg timestamp="20200505 21:59:42.885" level="INFO">${link_text} = Webshop</msg>
+<status status="PASS" starttime="20200505 21:59:41.236" endtime="20200505 21:59:42.885"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${link_text}</arg>
+<arg>Webshop</arg>
+</arguments>
+<status status="PASS" starttime="20200505 21:59:42.885" endtime="20200505 21:59:42.886"></status>
+</kw>
+<status status="PASS" starttime="20200505 21:59:41.235" endtime="20200505 21:59:42.886"></status>
+</kw>
+<status status="PASS" starttime="20200505 21:59:34.843" endtime="20200505 21:59:42.886"></status>
+</kw>
+<doc>Test: User should be able to access the Webshop main page</doc>
+<tags>
+<tag>Access Webshop</tag>
+</tags>
+<status status="PASS" starttime="20200505 21:59:34.835" endtime="20200505 21:59:42.887" critical="yes"></status>
+</test>
+<test id="s1-s1-t2" name="User should be able to see currency converter">
+<kw name="Click Element" library="SeleniumLibrary">
+<doc>Click the element identified by ``locator``.</doc>
+<arguments>
+<arg>//*[@id="currentCurrency"]</arg>
+</arguments>
+<msg timestamp="20200505 21:59:42.892" level="INFO">Clicking element '//*[@id="currentCurrency"]'.</msg>
+<status status="PASS" starttime="20200505 21:59:42.892" endtime="20200505 21:59:44.605"></status>
+</kw>
+<doc>Test: The user should be able to see Currency Convertor button top on Webshop</doc>
+<tags>
+<tag>Currency Convertor</tag>
+</tags>
+<status status="PASS" starttime="20200505 21:59:42.889" endtime="20200505 21:59:44.605" critical="yes"></status>
+</test>
+<test id="s1-s1-t3" name="User should be able to chang prices Webshop site">
+<kw name="Slect Currency from List" library="Keywords">
+<kw name="Click Element" library="SeleniumLibrary">
+<doc>Click the element identified by ``locator``.</doc>
+<arguments>
+<arg>Xpath://*[@id="14"]</arg>
+</arguments>
+<msg timestamp="20200505 21:59:44.610" level="INFO">Clicking element 'Xpath://*[@id="14"]'.</msg>
+<status status="PASS" starttime="20200505 21:59:44.609" endtime="20200505 21:59:46.287"></status>
+</kw>
+<status status="PASS" starttime="20200505 21:59:44.609" endtime="20200505 21:59:46.287"></status>
+</kw>
+<doc>Test: The user should be able to change all prices on Webshop site by slecting drop down currency</doc>
+<tags>
+<tag>Change Price</tag>
+</tags>
+<status status="PASS" starttime="20200505 21:59:44.607" endtime="20200505 21:59:46.289" critical="yes"></status>
+</test>
+<kw name="End Web Test" library="Keywords" type="teardown">
+<kw name="Close Browser" library="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" starttime="20200505 21:59:46.306" endtime="20200505 21:59:49.492"></status>
+</kw>
+<status status="PASS" starttime="20200505 21:59:46.306" endtime="20200505 21:59:49.492"></status>
+</kw>
+<doc>This is some basic info about the whole Webshop test suite</doc>
+<status status="PASS" starttime="20200505 21:59:27.843" endtime="20200505 21:59:49.492"></status>
+</suite>
+<status status="PASS" starttime="20200505 21:59:27.773" endtime="20200505 21:59:49.515"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="3" fail="0">Critical Tests</stat>
+<stat pass="3" fail="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0">Access Webshop</stat>
+<stat pass="1" fail="0">Change Price</stat>
+<stat pass="1" fail="0">Currency Convertor</stat>
+</tag>
+<suite>
+<stat pass="3" fail="0" id="s1" name="Tests">Tests</stat>
+<stat pass="3" fail="0" id="s1-s1" name="CurrencyCheck">Tests.CurrencyCheck</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
