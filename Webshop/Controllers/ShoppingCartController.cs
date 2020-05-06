@@ -52,6 +52,12 @@ namespace Webshop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> ClearShoppingCart()
+        {
+            await Task.Run( () => HttpContext.Session.SetString("cartItems", ""));
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
         [HttpPost]
         public async Task<IActionResult> IncrementProductQuantity(int? id)
         {
