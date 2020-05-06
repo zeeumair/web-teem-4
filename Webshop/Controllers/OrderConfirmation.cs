@@ -53,17 +53,13 @@ namespace Webshop.Controllers
             var cartItems = HttpContext.Session.GetString("cartItems");
             foreach (var id in cartItems)
             {
-                if (!orderItems.Exists(oi => oi.Product.Id == id - '0'))
-                {
-                    orderItems.Add(
-                        new OrderItem
-                        {
-                            Order = order,
-                            Product = await _context.Products.FindAsync(id - '0'),
-                            Quantity = cartItems.Count(p => p.ToString() == id.ToString())
-                        }
-                    );
-                }
+                orderItems.Add(
+                    new OrderItem
+                    {
+                        Order = order,
+                        Product = await _context.Products.FindAsync(id - '0'),
+                        Quantity = cartItems.Count(p => p.ToString() == id.ToString())
+                    });
             }
             await _context.AddRangeAsync(orderItems);
             await _context.SaveChangesAsync();
@@ -74,7 +70,7 @@ namespace Webshop.Controllers
             ViewBag.delivery = deliveryTime;
             ViewBag.orderId = order.Id;
             HttpContext.Session.SetString("cartItems", "");
-
+            ViewBag.HideCurrencyConversion = true;
             return View(orderItems); 
         }  
 
@@ -126,7 +122,7 @@ namespace Webshop.Controllers
 
             }
 
-            purchaseConfirmation += $"for the amount of ${totalAmount}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+            purchaseConfirmation = purchaseConfirmation + $"for the amount of ${CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
             recipient = email;
             subject = "Order Confirmation";
             body = purchaseConfirmation;

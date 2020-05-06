@@ -22,7 +22,7 @@
     <input type="email" name="email" />
     <label>(Leave blank to use your registered address)</label>
     <br />
-    <label>Total Price: @ViewBag.totalPrice</label>
+    <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
     <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
     <input type="submit" id="submit" value="Order" disabled />

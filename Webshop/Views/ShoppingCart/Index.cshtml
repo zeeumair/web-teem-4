@@ -10,13 +10,13 @@
     <thead>
         <tr>
             <th>
-                Product
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 Quantity
             </th>
             <th>
-                Price
+                @Html.DisplayNameFor(model => model.Price)
             </th>
         </tr>
     </thead>
@@ -56,8 +56,10 @@
                     </div>
                 </td>
                 <td class="align-middle">
-                    <h2>@price</h2>
-
+                    <h2>
+                        @CurrencyManager.CalcPrice(item.Price * quantity,
+                                     HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                    </h2>
                 </td>
 
             </tr>
@@ -66,7 +68,11 @@
     <tfoot>
         <tr>
             <td class="justify-content-center" colspan="4">
-                <h4 class="text-center">Total cost: @sum SEK</h4>
+                <h4 class="text-center">
+                    Total cost: @CurrencyManager.CalcPrice(Model.Sum(p => p.Price),
+                                    HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                    @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
+                </h4>
             </td>
         </tr>
     </tfoot>

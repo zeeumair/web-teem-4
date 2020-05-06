@@ -53,5 +53,7 @@ namespace Webshop.Data
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
+
+        public DbSet<Currency> Currencies { get; set; }
     }
 }
