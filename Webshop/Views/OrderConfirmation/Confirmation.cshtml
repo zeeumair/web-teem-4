@@ -54,7 +54,7 @@
 @Html.ActionLink("ShopMore", "Index", "/", null, null)
 @Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = Model.FirstOrDefault().OrderId })
 
-<h1>Totalt Betalt @CurrencyManager.CalcPrice(decimal.Parse(Model.FirstOrDefault().Order.TotalAmount.ToString()), HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode"), betalt via @ViewBag.paymentType</h1>
+<h1>Totalt Betalt @CurrencyManager.CalcPrice(decimal.Parse(Model.FirstOrDefault().Order.TotalAmount.ToString()), HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode"), betalt via @Model.Select(o => o.Order.PaymentOption).FirstOrDefault()</h1>
 <p>
     Your order will be delivered to you within: @Model.Select(o => o.Order.DeliveryOption).FirstOrDefault().
 </p>
