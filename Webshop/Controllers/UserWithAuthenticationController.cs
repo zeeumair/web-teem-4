@@ -13,12 +13,16 @@ namespace Webshop.Controllers
 {
     public class UserWithAuthenticationController : Controller
     {
-        
+        private User userToUpdate;
+        private User user;
+
         private UserManager<User> UserMgr { get; }
 
         private SignInManager<User> SignInMgr { get; }
 
         private IdentityAppContext _context { get; set; }
+
+        private Task<User> GetCurrentUserAsync() => UserMgr.GetUserAsync(HttpContext.User);
 
 
 
@@ -31,7 +35,36 @@ namespace Webshop.Controllers
 
         }
 
+        public async Task<IActionResult> Edit()
+        {
+             user = await GetCurrentUserAsync();
 
+            return View(user); 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(User user)
+        {
+            userToUpdate = await UserMgr.FindByEmailAsync(user.Email);
+
+            userToUpdate.Email = user.Email;
+            userToUpdate.PhoneNumber = user.PhoneNumber;
+            userToUpdate.StreetAdress = user.StreetAdress;
+            userToUpdate.City = user.City;
+            userToUpdate.PostNumber = user.PostNumber;
+            userToUpdate.LastName = user.LastName;
+            userToUpdate.FirstName = user.FirstName;
+            userToUpdate.Country = user.Country;
+            userToUpdate.Currency = user.Currency;
+            userToUpdate.UserName = user.Email; 
+
+            await UserMgr.UpdateAsync(userToUpdate);
+
+
+            return View(userToUpdate);
+        }
+        
         public async Task<IActionResult> Logout()
         {
             await SignInMgr.SignOutAsync();

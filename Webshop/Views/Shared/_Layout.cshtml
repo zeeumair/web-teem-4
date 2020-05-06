@@ -29,8 +29,10 @@
 
                             @if (User.Identity.IsAuthenticated)
                             {
-                               
+
                                 <a asp-controller="UserWithAuthentication" asp-action="Logout">Logout</a>
+                                <a asp-controller="UserWithAuthentication" asp-action="Edit">Min Sida</a>
+
 
                             }
                             else
