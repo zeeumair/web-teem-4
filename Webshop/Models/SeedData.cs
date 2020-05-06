@@ -164,7 +164,8 @@ namespace Webshop
                         context.Currencies.Add(new Currency
                         {
                             CurrencyCode = item.Key,
-                            CurrencyRate = item.Value
+                            CurrencyRate = item.Value,
+                            LastUpdated = currencyRates.Date
                         });
                     }
                 }
