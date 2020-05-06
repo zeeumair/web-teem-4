@@ -19,29 +19,30 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Manage Users</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Shopping Cart</a>
                         </li>
-                        <li class="scrollableCollapse">
-                            <a class="btn btn-secondary" role="button" data-toggle="collapse" href="#currencyListContainer">
-                                @{
-                                    if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
-                                    {
-                                        <h6 id="currentCurrency">Currency: SEK</h6>
-                                    }
-                                    else
-                                    {
-                                        <h6 id="currentCurrency">Currency: @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</h6>
-                                    }
-                                }
-                            </a>
-                            <div id="currencyListContainer" class="collapse">
-                                <ul id="currencyList" class="list-group">
-                                </ul>
-                            </div>
-                        </li>
+                        @{ if (ViewBag.HideCurrencyConversion == null)
+                           {
+                                <li class="scrollableCollapse">
+                                    <a class="btn btn-secondary" role="button" data-toggle="collapse" href="#currencyListContainer">
+                                        @{
+                                            if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
+                                            {
+                                                <h6 id="currentCurrency">Currency: SEK</h6>
+                                            }
+                                            else
+                                            {
+                                                <h6 id="currentCurrency">Currency: @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</h6>
+                                            }
+                                        }
+                                    </a>
+                                    <div id="currencyListContainer" class="collapse">
+                                        <ul id="currencyList" class="list-group">
+                                        </ul>
+                                    </div>
+                                </li>
+                           }
+                        }
                     </ul>
                 </div>
             </div>

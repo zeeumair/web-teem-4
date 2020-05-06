@@ -102,7 +102,7 @@ namespace Webshop.Controllers
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;
             ViewBag.orderId = orderId;
-
+            ViewBag.HideCurrencyConversion = true;
             return View(orderItemIqueryableForView); 
         }  
 
