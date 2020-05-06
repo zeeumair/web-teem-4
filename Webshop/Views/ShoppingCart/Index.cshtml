@@ -69,7 +69,7 @@
         <tr>
             <td class="justify-content-center" colspan="4">
                 <h4 class="text-center">
-                    Total cost: @CurrencyManager.CalcPrice(Model.Sum(p => p.Price),
+                    Total cost: @CurrencyManager.CalcPrice(sum,
                                     HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
                     @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
                 </h4>
