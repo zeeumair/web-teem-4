@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Webshop.Data;
 using System;
 using System.Linq;
 using Webshop.Models;
@@ -37,9 +36,9 @@ namespace Webshop
         }
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            using (var context = new WebshopContext(
+            using (var context = new IdentityAppContext(
                 serviceProvider.GetRequiredService<
-                    DbContextOptions<WebshopContext>>()))
+                    DbContextOptions<IdentityAppContext>>()))
             {
 
                 if (context.Users.Any() && context.OrderItems.Any() && context.Currencies.Any())
@@ -60,7 +59,7 @@ namespace Webshop
                             {
                                 FirstName = "Test",
                                 LastName = "User",
-                                Username = "testuser1",
+                                //Username = "testuser1",
                                 Password = "password",
                                 StreetAdress = "Gogubbegatan 3",
                                 PostNumber = "41706",
@@ -95,7 +94,7 @@ namespace Webshop
                             {
                                 FirstName = "Test",
                                 LastName = "User",
-                                Username = "testuser1",
+                                //Username = "testuser1",
                                 Password = "password",
                                 StreetAdress = "Gogubbegatan 3",
                                 PostNumber = "41706",
@@ -130,7 +129,7 @@ namespace Webshop
                             {
                                 FirstName = "Test",
                                 LastName = "User",
-                                Username = "testuser1",
+                                //Username = "testuser1",
                                 Password = "password",
                                 StreetAdress = "Gogubbegatan 3",
                                 PostNumber = "41706",
