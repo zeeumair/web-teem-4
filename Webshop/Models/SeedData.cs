@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using Webshop.Models;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Webshop
 {
@@ -40,7 +41,7 @@ namespace Webshop
                     DbContextOptions<IdentityAppContext>>()))
             {
 
-                if (context.Users.Any() && context.OrderItems.Any())
+                if (context.Users.Any() && context.OrderItems.Any() && context.Currencies.Any())
                 {
                     return;
                 }
@@ -153,6 +154,18 @@ namespace Webshop
                         },
                         Quantity = 3
                     });
+                }
+                if(!context.Currencies.Any())
+                {
+                    var currencyRates = CurrencyManager.GetCurrencyRates().Result;
+                    foreach (KeyValuePair<string, double> item in  currencyRates.Rates)
+                    {
+                        context.Currencies.Add(new Currency
+                        {
+                            CurrencyCode = item.Key,
+                            CurrencyRate = item.Value
+                        });
+                    }
                 }
                 context.SaveChanges();
             }

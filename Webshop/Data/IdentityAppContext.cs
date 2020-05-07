@@ -5,9 +5,6 @@ namespace Webshop.Models
 {
     public class IdentityAppContext : IdentityDbContext<User, AppRole, int>
     {
-
-        //public DbSet<User> Users { get; set; }
-
         public DbSet<Order> Orders { get; set; }
 
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -15,6 +12,8 @@ namespace Webshop.Models
         public DbSet<Product> Products { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
+
+        public DbSet<Currency> Currencies { get; set; }
 
         public IdentityAppContext(DbContextOptions<IdentityAppContext> options) : base(options)
         {

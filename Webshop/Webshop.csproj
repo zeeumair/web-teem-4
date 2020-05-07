@@ -15,8 +15,12 @@
     <Compile Remove="Migrations\20200423222911_createIdentityScheme.Designer.cs" />
     <Compile Remove="Migrations\20200423223152_createIdentityScheme.cs" />
     <Compile Remove="Migrations\20200423223152_createIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200424123137_AddCurrencyTable.cs" />
+    <Compile Remove="Migrations\20200424123137_AddCurrencyTable.Designer.cs" />
     <Compile Remove="Migrations\20200426005804_updatedPriceModel.cs" />
     <Compile Remove="Migrations\20200426005804_updatedPriceModel.Designer.cs" />
+    <Compile Remove="Migrations\20200507090814_addedIddbset.cs" />
+    <Compile Remove="Migrations\20200507090814_addedIddbset.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

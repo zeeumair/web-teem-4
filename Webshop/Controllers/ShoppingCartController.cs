@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,6 @@ namespace Webshop.Controllers
 
             }
            
-
             orderItems = new List<string>();
             orderItemToList = await webshopContext.ToListAsync();
 
@@ -49,78 +49,57 @@ namespace Webshop.Controllers
 
             TempData["OrderItems"] = orderItems;
 
-            return View(orderItemToList);
+            return View(await _context.Products.Where(p => HttpContext.Session.GetString("cartItems").Contains(p.Id.ToString())).ToListAsync());
+
         }
 
         public async Task<IActionResult> AddProductToCart(int id, string userEmail)
         {
-            if (OrderItemExists(userEmail, id))
+            await Task.Run(() =>
             {
-                var orderItem = _context.OrderItems.Where(oi => oi.Order.User.Email == userEmail && oi.ProductId == id && !oi.Order.Confirmed).FirstOrDefault();
-
-                if (orderItem != null)
-                {
-                    orderItem.Quantity += 1;
-                    await _context.SaveChangesAsync();
-                }
-                
-            }
-            else
-            {
-                var product = await _context.Products.FindAsync(id);
-               //var order = await _context.Orders.Where(o => o.User.Id == userId && !o.Confirmed).FirstOrDefaultAsync();
-                var newOrderItem = _context.OrderItems.Add(
-                    new OrderItem
-                    {
-                        Order = new Order
-                        {
-                            Confirmed = false,
-                            //User = await _context.Users.FindAsync(userId),
-                            PaymentOption = "",
-                            TotalAmount = 0,
-                            DeliveryOption = ""
-                        },
-                        Product = product,
-                        Quantity = 1
-                    });
-            }
-            await _context.SaveChangesAsync();
+                HttpContext.Session.GetString("cartItems");
+                string cartItems = HttpContext.Session.GetString("cartItems");
+                if (String.IsNullOrEmpty(cartItems))
+                    HttpContext.Session.SetString("cartItems", id.ToString());
+                else
+                    HttpContext.Session.SetString("cartItems", cartItems + id.ToString());
+            });
 
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
         [HttpPost]
-        public async Task<IActionResult> DecrementProductQuantity(int? id, int? idPart)
+        public async Task<IActionResult> DecrementProductQuantity(int? id)
         {
-            var currentItems = await _context.OrderItems.FindAsync(id, idPart);
-            if(currentItems.Quantity <= 1)
+            await Task.Run(() =>
             {
-                _context.OrderItems.Remove(currentItems);
-            }
-            else
-            {
-                currentItems.Quantity -= 1;
-            }
-
-            await _context.SaveChangesAsync();
-
+                var currentItems = HttpContext.Session.GetString("cartItems");
+                var updatedCart = currentItems.Remove(currentItems.IndexOf(id.ToString()), 1);
+                HttpContext.Session.SetString("cartItems", updatedCart);
+            });
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        public async Task<IActionResult> IncrementProductQuantity(int? id, int? idPart)
+        public async Task<IActionResult> IncrementProductQuantity(int? id)
         {
-            var currentItems = await _context.OrderItems.FindAsync(id, idPart);
-            currentItems.Quantity += 1;
-
-            await _context.SaveChangesAsync();
-
+            await Task.Run(() =>
+            {
+                var currentItems = HttpContext.Session.GetString("cartItems");
+                string updatedCart = currentItems + id.ToString();
+                HttpContext.Session.SetString("cartItems", updatedCart);
+            });
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderItemExists(string userEmail, int id)
         {
             return _context.OrderItems.Any(e => e.Order.User.Email == userEmail && e.ProductId == id && !e.Order.Confirmed);
+        }
+
+        private bool CartItemExists(string cartItems, int id)
+        {
+            return cartItems.Contains(id.ToString());
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,24 +23,26 @@ namespace Webshop.Controllers
         private string orderId;
         private IEnumerable<string> orderItems;
 
+
         public OrderConfirmationController(IdentityAppContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
         }
 
-        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, string userEmail, string currency)
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice)
         {
+            if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
+                return RedirectToAction("index", "Products");
             ViewBag.totalPrice = totalprice;
-            ViewBag.currency = currency;
 
             orderItems = TempData["OrderItems"] as IEnumerable<string>;
-            TempData["OrderedItems"] = orderItems;
-            TempData["UserEmail"] = userEmail;
+            TempData["OrderedItems"] = orderItems; // Vi får se
+            TempData["UserEmail"] = "omgzshoezz@gmail.com"; // vi får se
 
             return View();
         }
-
 
         public IActionResult LoginOrRegister(string totalPrice)
         {
@@ -47,55 +50,50 @@ namespace Webshop.Controllers
             return View(); 
         }
 
-        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string selectedCurrency)
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
-
-            var orderedItems = TempData["OrderedItems"] as IEnumerable<string>;
-            var userEmail = TempData["UserEmail"] as string;
-            var currentUser = _context.Users.Where(u => u.Email == userEmail).Single();
-
-            orderId = "";
-
-            IQueryable<OrderItem> allOrderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Include(u =>u.Order.User);
-
-            List<OrderItem> orderItemsList = new List<OrderItem>();
-
-            foreach (var orderItem in allOrderItems)
+            var order = new Order
+            {
+                User = await _context.Users.FindAsync(1),
+                PaymentOption = paymentType,
+                TotalAmount = double.Parse(totalPrice),
+                DeliveryOption = deliveryTime,
+                Confirmed = true
+            };
+            var orderItems = new List<OrderItem>();
+            var cartItems = HttpContext.Session.GetString("cartItems");
+            foreach (var id in cartItems)
+            {
+                if (!orderItems.Select(p => p.Product.Id == id - '0').Any())
                 {
-                    if(orderedItems.Contains(orderItem.OrderId.ToString()))
+                    orderItems.Add(
+                    new OrderItem
                     {
-                        orderItem.Order.User = currentUser; 
-                        orderItem.Order.PaymentOption = paymentType;
-                        orderItem.Order.DeliveryOption = deliveryTime;
-                        orderItem.Order.TotalAmount = Convert.ToDouble(totalPrice);
-                        orderItem.Order.Confirmed = true;
-
-                        currentUser.Currency = selectedCurrency; 
-                        orderId = orderItem.OrderId.ToString(); 
-                        
-                        orderItemsList.Add(orderItem);
-
-                    }
+                        Order = order,
+                        Product = await _context.Products.FindAsync(id - '0'),
+                        Quantity = cartItems.Count(p => p.ToString() == id.ToString())
+                    });
                 }
-
+            }
+            await _context.AddRangeAsync(orderItems);
             await _context.SaveChangesAsync();
 
-            ReciveConfirmationViaEmail(orderItemsList);
-
+            ReciveConfirmationViaEmail(orderItems, email);
             ViewBag.totalPrice = totalPrice;
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;
-            ViewBag.orderId = orderId;
-            ViewBag.currency = selectedCurrency; 
-
-            return View(orderItemsList); 
+            ViewBag.orderId = order.Id;
+            HttpContext.Session.SetString("cartItems", "");
+            ViewBag.HideCurrencyConversion = true;
+            return View(orderItems); 
         }  
 
         public async Task<ActionResult> DownloadConfirmationPdf(int orderId)
         {
             try
             {
-                var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId, true));
+                var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId));
                 return File(dataStream, "application/pdf", "OrderConfirmation.pdf");
             }
             catch (Exception e)
@@ -105,9 +103,9 @@ namespace Webshop.Controllers
             }
         }
 
-        public async Task<List<OrderItem>> GetOrderItemsByOrder(int orderId, bool includeConfirmed = false)
+        public async Task<List<OrderItem>> GetOrderItemsByOrder(int orderId)
         {
-            var orderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == orderId && o.Order.Confirmed == includeConfirmed);
+            var orderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == orderId);
             if(orderId <= 0 || orderItems.Count() <= 0)
             {
                 throw new Exception("Could not find your Order.");
@@ -118,12 +116,13 @@ namespace Webshop.Controllers
             }
         }
 
-        public void ReciveConfirmationViaEmail(List<OrderItem> orderItemsList)
+        public void ReciveConfirmationViaEmail(List<OrderItem> orderItemsList, string inputEmail)
         {       
 
             string purchaseConfirmation = "You successfully purchased: ";
 
-            var email = "";
+            //Edit when user is availible
+            var email = inputEmail ?? "omgzshoezz@gmail.com";
             double totalAmount = 0;
             var paymentOption = "";
             var deliveryOption = "";
@@ -131,15 +130,15 @@ namespace Webshop.Controllers
 
             foreach (var item in orderItemsList)
             {
-                purchaseConfirmation = purchaseConfirmation + $"{item.Quantity} of {item.Product.Name}, ";
+                purchaseConfirmation += $"{item.Quantity} of {item.Product.Name}, ";
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
-                email = item.Order.User.Email;
                 currency = item.Order.User.Currency; 
             }
 
-            purchaseConfirmation = purchaseConfirmation + $"for the amount of {totalAmount} {currency} via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+            purchaseConfirmation = purchaseConfirmation + $"for the amount of ${CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+
             recipient = email;
             subject = "Order Confirmation";
             body = purchaseConfirmation;

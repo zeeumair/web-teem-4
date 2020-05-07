@@ -14,30 +14,22 @@
         <label>Delivery Time</label>
 
         <select id="deliveryTime" name="deliveryTime">
-            <option value="twoToFiveDay">2-5 Days</option>
-            <option value="fiveToTenDays">5-10 Days</option>
-            <option value="thirtyDays">30 Days</option>
+            <option value="2-5 days">2-5 Days</option>
+            <option value="5-10 days">5-10 Days</option>
+            <option value="30 days">30 Days</option>
         </select>
 
         <br />
-
-        <label>Total Price</label> <p>@ViewBag.totalPrice @ViewBag.currency </p>
-
-        <label>Change Currency</label>
-        
-        <select id="selectedCurrency" name="selectedCurrency">
-            <option value="Sek">Sek</option>
-            <option value="Euro">Euro</option>
-            <option value="Pounds">Pounds</option>
-            <option value="USD">USD</option>
-        </select>
-        
+        <h2>Email Address</h2>
+        <input type="email" name="email" />
+        <label>(Leave blank to use your registered address)</label>
         <br />
+        <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
+        <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
         <input type="submit" id="submit" value="Order" />
-
+        <br />
     </form>
 
 <script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="~/js/SelectPaymentAndDeliveryOptions.js"></script>

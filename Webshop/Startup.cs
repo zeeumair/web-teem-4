@@ -1,8 +1,4 @@
 
-
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +41,9 @@ namespace Webshop
             });
 
             services.AddControllersWithViews();
+            services.AddHttpContextAccessor();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
             services.AddDbContext<IdentityAppContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("WebshopContext")));
         }
@@ -66,6 +65,8 @@ namespace Webshop
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseSession();
 
             app.UseRouting();
 
