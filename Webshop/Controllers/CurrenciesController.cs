@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
@@ -14,9 +13,9 @@ namespace Webshop.Controllers
     [ApiController]
     public class CurrenciesController : ControllerBase
     {
-        private readonly WebshopContext _context;
+        private readonly IdentityAppContext _context;
 
-        public CurrenciesController(WebshopContext context)
+        public CurrenciesController(IdentityAppContext context)
         {
             _context = context;
         }
