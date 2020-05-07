@@ -7,6 +7,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200506104924_CurrencyLastUpdatedColumn.cs" />
     <Compile Remove="Migrations\20200506104924_CurrencyLastUpdatedColumn.Designer.cs" />
+    <Compile Remove="Migrations\20200506105506_CurrencyLastUpdatedColumn.cs" />
+    <Compile Remove="Migrations\20200506105506_CurrencyLastUpdatedColumn.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

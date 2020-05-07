@@ -32,9 +32,6 @@ namespace Webshop.Migrations
                     b.Property<double>("CurrencyRate")
                         .HasColumnType("float");
 
-                    b.Property<DateTimeOffset>("LastUpdated")
-                        .HasColumnType("datetimeoffset");
-
                     b.HasKey("Id");
 
                     b.ToTable("Currencies");
