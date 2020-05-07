@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Webshop.Controllers;
 using Webshop.Models;
 
 
@@ -44,6 +45,8 @@ namespace Webshop
             services.AddHttpContextAccessor();
             services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddTransient<UserWithAuthenticationController>();
+
             services.AddDbContext<IdentityAppContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("WebshopContext")));
         }

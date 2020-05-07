@@ -42,6 +42,8 @@ namespace Webshop.Controllers
             return View(user); 
         }
 
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(User user)
@@ -64,7 +66,7 @@ namespace Webshop.Controllers
 
             return View(userToUpdate);
         }
-        
+
         public async Task<IActionResult> Logout()
         {
             await SignInMgr.SignOutAsync();
@@ -83,7 +85,7 @@ namespace Webshop.Controllers
 
             if (result.Succeeded && totalPrice != null)
             {
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency});
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
             }
             if (result.Succeeded)
             {
@@ -125,7 +127,7 @@ namespace Webshop.Controllers
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);
 
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
             }
             if (result.Succeeded)
             {

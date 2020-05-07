@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,9 @@ namespace Webshop.Controllers
 {
     public class OrderConfirmationController : Controller
     {
+        private UserManager<User> UserMgr { get; }
+        private Task<User> GetCurrentUserAsync() => UserMgr.GetUserAsync(HttpContext.User);
+
 
         private readonly IdentityAppContext _context;
         private readonly IConfiguration _config;
@@ -23,11 +27,11 @@ namespace Webshop.Controllers
         private string orderId;
         private IEnumerable<string> orderItems;
 
-
-        public OrderConfirmationController(IdentityAppContext context, IConfiguration config)
+        public OrderConfirmationController(IdentityAppContext context, IConfiguration config, UserManager<User> userMgr)
         {
             _context = context;
             _config = config;
+            UserMgr = userMgr;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -35,17 +39,19 @@ namespace Webshop.Controllers
         {
             if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
                 return RedirectToAction("index", "Products");
-            ViewBag.totalPrice = totalprice;
 
-            orderItems = TempData["OrderItems"] as IEnumerable<string>;
-            TempData["OrderedItems"] = orderItems; // Vi får se
-            TempData["UserEmail"] = "omgzshoezz@gmail.com"; // vi får se
+            ViewBag.totalPrice = totalprice;
 
             return View();
         }
 
         public IActionResult LoginOrRegister(string totalPrice)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+               return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalprice = totalPrice });
+            }
+
             ViewBag.totalPrice = totalPrice; 
             return View(); 
         }
@@ -53,9 +59,11 @@ namespace Webshop.Controllers
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
+            var currentUser = await GetCurrentUserAsync();
+
             var order = new Order
             {
-                User = await _context.Users.FindAsync(1),
+                User = await _context.Users.FindAsync(currentUser.Id),
                 PaymentOption = paymentType,
                 TotalAmount = double.Parse(totalPrice),
                 DeliveryOption = deliveryTime,
@@ -122,7 +130,7 @@ namespace Webshop.Controllers
             string purchaseConfirmation = "You successfully purchased: ";
 
             //Edit when user is availible
-            var email = inputEmail ?? "omgzshoezz@gmail.com";
+            var email = "";
             double totalAmount = 0;
             var paymentOption = "";
             var deliveryOption = "";
@@ -130,11 +138,12 @@ namespace Webshop.Controllers
 
             foreach (var item in orderItemsList)
             {
-                purchaseConfirmation += $"{item.Quantity} of {item.Product.Name}, ";
+                purchaseConfirmation = purchaseConfirmation + $"{item.Quantity} of {item.Product.Name}, ";
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
-                currency = item.Order.User.Currency; 
+                currency = item.Order.User.Currency;
+                email = inputEmail ?? item.Order.User.Email; 
             }
 
             purchaseConfirmation = purchaseConfirmation + $"for the amount of ${CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
