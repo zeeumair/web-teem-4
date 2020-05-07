@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
@@ -16,13 +15,16 @@ namespace Webshop.Controllers
     public class OrderConfirmationController : Controller
     {
 
-        private readonly WebshopContext _context;
+        private readonly IdentityAppContext _context;
         private readonly IConfiguration _config;
         private string recipient;
         private string subject;
         private string body;
+        private string orderId;
+        private IEnumerable<string> orderItems;
 
-        public OrderConfirmationController(WebshopContext context, IConfiguration config)
+
+        public OrderConfirmationController(IdentityAppContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
@@ -35,7 +37,17 @@ namespace Webshop.Controllers
                 return RedirectToAction("index", "Products");
             ViewBag.totalPrice = totalprice;
 
+            orderItems = TempData["OrderItems"] as IEnumerable<string>;
+            TempData["OrderedItems"] = orderItems; // Vi får se
+            TempData["UserEmail"] = "omgzshoezz@gmail.com"; // vi får se
+
             return View();
+        }
+
+        public IActionResult LoginOrRegister(string totalPrice)
+        {
+            ViewBag.totalPrice = totalPrice; 
+            return View(); 
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -114,6 +126,7 @@ namespace Webshop.Controllers
             double totalAmount = 0;
             var paymentOption = "";
             var deliveryOption = "";
+            var currency = "";
 
             foreach (var item in orderItemsList)
             {
@@ -121,11 +134,11 @@ namespace Webshop.Controllers
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
-                //Add user when user is availible
-
+                currency = item.Order.User.Currency; 
             }
 
             purchaseConfirmation = purchaseConfirmation + $"for the amount of ${CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+
             recipient = email;
             subject = "Order Confirmation";
             body = purchaseConfirmation;

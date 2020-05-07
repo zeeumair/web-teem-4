@@ -21,6 +21,27 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Shopping Cart</a>
                         </li>
+
+                        <li class="nav-item">
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+
+                                <a asp-controller="UserWithAuthentication" asp-action="Logout">Logout</a>
+                                <a asp-controller="UserWithAuthentication" asp-action="Edit">Min Sida</a>
+
+
+                            }
+                            else
+                            {
+                                <a asp-controller="UserWithAuthentication" asp-action="Login">Login</a>
+                                <a asp-controller="UserWithAuthentication" asp-action="Register">Register</a>
+
+                            }
+
+
+                        </li>
+
                         @{ if (ViewBag.HideCurrencyConversion == null)
                            {
                                 <li class="scrollableCollapse">
@@ -43,6 +64,7 @@
                                 </li>
                            }
                         }
+
                     </ul>
                 </div>
             </div>

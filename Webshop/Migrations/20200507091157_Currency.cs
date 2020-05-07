@@ -2,7 +2,7 @@
 
 namespace Webshop.Migrations
 {
-    public partial class AddCurrencyTable : Migration
+    public partial class Currency : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

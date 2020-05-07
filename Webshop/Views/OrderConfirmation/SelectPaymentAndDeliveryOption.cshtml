@@ -2,33 +2,34 @@
 @Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
 
 
-<form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
-    <h2> Payment</h2>
+    <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
+        <label>Payment Type</label>
 
-    <label>Swish</label>
-    <input type="checkbox" id="swish" name="paymentType" onclick="TogglePayment()" value="swish">
-    <label>Invoice</label>
-    <input type="checkbox" id="invoice" name="paymentType" onclick="TogglePayment()" value="invoice">
+        <select id="paymentType" name="paymentType">
+            <option value="Swish">Swish</option>
+            <option value="Invoice">Invoice</option>
+        </select>
+        <br />
 
-    <h2>Delivery</h2>
-    <label>2-5 days</label>
-    <input type="checkbox" id="twoToFiveDay" name="deliveryTime" value="2-5 Days" onclick="ToggleDelivery2()">
-    <label>5-10 days</label>
-    <input type="checkbox" id="fiveToTenDays" name="deliveryTime" value="5-10 Days" onclick="ToggleDelivery3()">
-    <label>30 days</label>
-    <input type="checkbox" id="thirtyDays" name="deliveryTime" value="30 Days" onclick="ToggleDelivery1()">
+        <label>Delivery Time</label>
 
-    <h2>Email Address</h2>
-    <input type="email" name="email" />
-    <label>(Leave blank to use your registered address)</label>
-    <br />
-    <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
-    <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
+        <select id="deliveryTime" name="deliveryTime">
+            <option value="2-5 days">2-5 Days</option>
+            <option value="5-10 days">5-10 Days</option>
+            <option value="30 days">30 Days</option>
+        </select>
 
-    <input type="submit" id="submit" value="Order" disabled />
+        <br />
+        <h2>Email Address</h2>
+        <input type="email" name="email" />
+        <label>(Leave blank to use your registered address)</label>
+        <br />
+        <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
+        <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
-</form>
+        <input type="submit" id="submit" value="Order" />
+        <br />
+    </form>
 
 <script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="~/js/SelectPaymentAndDeliveryOptions.js"></script>

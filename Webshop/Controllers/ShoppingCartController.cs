@@ -6,26 +6,54 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
 {
     public class ShoppingCartController : Controller
     {
-        private readonly WebshopContext _context;
+        private readonly IdentityAppContext _context;
+        private IQueryable<OrderItem> webshopContext;
+        private List<string> orderItems;
+        private List<OrderItem> orderItemToList;
 
-        public ShoppingCartController(WebshopContext context)
+        public ShoppingCartController(IdentityAppContext context)
         {
             _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
+            IQueryable<OrderItem> webshopContext = null;
+            var UnconfirmedOrderItemsUser = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Include(ou => ou.Order.User).Where(u => !u.Order.Confirmed && u.Order.User.Email == User.Identity.Name); // Add filter on current User once we have a user login system
+
+            if (User.Identity.IsAuthenticated && UnconfirmedOrderItemsUser != null)
+            {
+
+                    webshopContext = UnconfirmedOrderItemsUser;
+               
+            } 
+            if(User.Identity.IsAuthenticated || !User.Identity.IsAuthenticated)
+            {
+                webshopContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(u => !u.Order.Confirmed);
+
+            }
+           
+            orderItems = new List<string>();
+            orderItemToList = await webshopContext.ToListAsync();
+
+            foreach (var item in webshopContext)
+            {               
+                orderItems.Add(item.OrderId.ToString());
+            }
+
+            TempData["OrderItems"] = orderItems;
+
             return View(await _context.Products.Where(p => HttpContext.Session.GetString("cartItems").Contains(p.Id.ToString())).ToListAsync());
+
         }
 
-        public async Task<IActionResult> AddProductToCart(int id)
+        public async Task<IActionResult> AddProductToCart(int id, string userEmail)
         {
             await Task.Run(() =>
             {
@@ -62,6 +90,11 @@ namespace Webshop.Controllers
                 HttpContext.Session.SetString("cartItems", updatedCart);
             });
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool OrderItemExists(string userEmail, int id)
+        {
+            return _context.OrderItems.Any(e => e.Order.User.Email == userEmail && e.ProductId == id && !e.Order.Confirmed);
         }
 
         private bool CartItemExists(string cartItems, int id)
