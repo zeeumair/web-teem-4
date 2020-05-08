@@ -30,7 +30,18 @@ namespace Webshop.Controllers
         private string subject;
         private string body;
         private string orderId;
-        private IEnumerable<string> orderItems;
+        //private IEnumerable<string> orderItems;
+        private User currentUser;
+        private Order order;
+        private List<OrderItem> orderItems;
+        private string cartItems;
+        private byte[] dataStream;
+        private string purchaseConfirmation;
+        private string email;
+        private double totalAmount;
+        private string paymentOption;
+        private string deliveryOption;
+        private string currency;
 
         public OrderConfirmationController(IdentityAppContext context, IConfiguration config, UserManager<User> userMgr)
         {
@@ -40,7 +51,7 @@ namespace Webshop.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        public async Task<IActionResult> SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
         {
             if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
                 return RedirectToAction("index", "Products");
@@ -69,9 +80,9 @@ namespace Webshop.Controllers
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
-            var currentUser = await GetCurrentUserAsync();
+             currentUser = await GetCurrentUserAsync();
 
-            var order = new Order
+             order = new Order
             {
                 User = await _context.Users.FindAsync(currentUser.Id),
                 PaymentOption = paymentType,
@@ -79,8 +90,10 @@ namespace Webshop.Controllers
                 DeliveryOption = deliveryTime,
                 Confirmed = true
             };
-            var orderItems = new List<OrderItem>();
-            var cartItems = HttpContext.Session.GetString("cartItems");
+             
+            orderItems = new List<OrderItem>();
+            cartItems = HttpContext.Session.GetString("cartItems");
+
             foreach (var id in cartItems)
             {
                 if (!orderItems.Where(p => p.Product.Id == id - '0').Any())
@@ -98,12 +111,15 @@ namespace Webshop.Controllers
             await _context.SaveChangesAsync();
 
             ReciveConfirmationViaEmail(orderItems, email);
+
             ViewBag.totalPrice = totalPrice;
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;
             ViewBag.orderId = order.Id;
-            HttpContext.Session.SetString("cartItems", "");
             ViewBag.HideCurrencyConversion = true;
+
+            HttpContext.Session.SetString("cartItems", "");
+
             return View(orderItems); 
         }  
 
@@ -111,7 +127,7 @@ namespace Webshop.Controllers
         {
             try
             {
-                var dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId));
+                dataStream = await GetOrderConfirmationPDF.ViewToString(this, await GetOrderItemsByOrder(orderId));
                 return File(dataStream, "application/pdf", "OrderConfirmation.pdf");
             }
             catch (Exception e)
@@ -124,6 +140,7 @@ namespace Webshop.Controllers
         public async Task<List<OrderItem>> GetOrderItemsByOrder(int orderId)
         {
             var orderItems = _context.OrderItems.Include(o => o.Order).Include(o => o.Product).Where(o => o.OrderId == orderId);
+          
             if(orderId <= 0 || orderItems.Count() <= 0)
             {
                 throw new Exception("Could not find your Order.");
@@ -137,14 +154,12 @@ namespace Webshop.Controllers
         public void ReciveConfirmationViaEmail(List<OrderItem> orderItemsList, string inputEmail)
         {       
 
-            string purchaseConfirmation = "You successfully purchased: ";
-
-            //Edit when user is availible
-            var email = "";
-            double totalAmount = 0;
-            var paymentOption = "";
-            var deliveryOption = "";
-            var currency = "";
+            purchaseConfirmation = "You successfully purchased: ";
+            email = "";
+            totalAmount = 0;
+            paymentOption = "";
+            deliveryOption = "";
+            currency = "";
 
             foreach (var item in orderItemsList)
             {

@@ -17,6 +17,12 @@ namespace Webshop.Controllers
         private User user;
         private Microsoft.AspNetCore.Identity.SignInResult result;
         private User currentUser;
+        private IQueryable<OrderItem> orderHistory;
+        private string token;
+        private string passwordResetLink;
+        private string to;
+        private string subject;
+        private string body;
 
         private UserManager<User> UserMgr { get; }
 
@@ -80,7 +86,7 @@ namespace Webshop.Controllers
         public async Task<User> ChangeToKeyCustomer(User currentUser)
         {
 
-            var orderHistory = _context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
+             orderHistory = _context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
 
             if (orderHistory.Count() > 2)
             {
@@ -94,6 +100,7 @@ namespace Webshop.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(User model, string totalPrice)
         {
@@ -154,6 +161,7 @@ namespace Webshop.Controllers
                 Country = model.Country
                 
             };
+            
             var result = await UserMgr.CreateAsync(user, model.Password);
 
 
@@ -193,11 +201,11 @@ namespace Webshop.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserMgr.FindByEmailAsync(model.Email);
+
                 if (user != null)
                 {
-                    var token = await UserMgr.GeneratePasswordResetTokenAsync(user);
-
-                    var passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
+                     token = await UserMgr.GeneratePasswordResetTokenAsync(user);
+                     passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
                         new { token = token , email = model.Email}, Request.Scheme);
 
                     SendResetPasswordLink(passwordResetLink, model.Email);
@@ -213,12 +221,9 @@ namespace Webshop.Controllers
 
         public IActionResult SendResetPasswordLink(string resetPasswordLink, string email)
         {
-
-
-
-            string to = email;
-            string subject = "Reset Password";
-            string body = $"Please click the link to reset your password {resetPasswordLink}";
+            to = email;
+            subject = "Reset Password";
+            body = $"Please click the link to reset your password {resetPasswordLink}";
             MailMessage mm = new MailMessage();
             mm.To.Add(to);
             mm.Subject = subject;
