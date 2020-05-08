@@ -150,7 +150,9 @@ namespace Webshop.Controllers
                 PostNumber = model.PostNumber,
                 CreatedAt = DateTime.Now,
                 PhoneNumber = model.PhoneNumber,
-                Currency = model.Currency
+                Currency = model.Currency,
+                Country = model.Country
+                
             };
             var result = await UserMgr.CreateAsync(user, model.Password);
 
