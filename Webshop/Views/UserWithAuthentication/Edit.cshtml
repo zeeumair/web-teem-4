@@ -4,6 +4,11 @@
     ViewData["Title"] = "Edit";
 }
 
+<head>
+
+    <link rel="stylesheet" href="~/css/UserWithAuthentication/Edit.css" />
+
+</head>
 
 <hr />
 <div class="row">
@@ -40,7 +45,7 @@
                 <input asp-for="Country" class="form-control" />
                 <span asp-validation-for="Country" class="text-danger"></span>
             </div>
-     
+
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>

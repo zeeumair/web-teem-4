@@ -4,6 +4,13 @@
     ViewData["Title"] = "Confirmation";
 }
 
+    <head>
+
+        <link rel="stylesheet" href="~/css/OrderConfirmation/Confirmation.css" />
+
+    </head>
+
+
 <p>
     Your confirmation number is: @Model.Select(o => o.Order.Id).FirstOrDefault()
 </p>
