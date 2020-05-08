@@ -1,5 +1,5 @@
 
-@Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
+@Html.ActionLink("Back", "LoginOrRegister", "OrderConfirmation", null, null)
 
 
 <head>
@@ -26,10 +26,12 @@
     </select>
 
     <br />
-    <h2>Email Address</h2>
-    <input type="email" name="email" />
-    <label>(Leave blank to use your registered address)</label>
+    
+    <label>Email Address</label>
+    <input type="email" name="email" placeholder="Leave blank to email in your profile"/>
+
     <br />
+
     <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
 
     <p style="color:red">@ViewBag.keyCustomer</p>
