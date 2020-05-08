@@ -35,10 +35,15 @@ namespace Webshop.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        public IActionResult SelectPaymentAndDeliveryOption(string totalprice)
+        public async Task<IActionResult> SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
         {
             if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
                 return RedirectToAction("index", "Products");
+
+            if (keyCustomer)
+            {
+                ViewBag.keyCustomer = "You recived a 10% discount since you have been a loyal customer"; 
+            }
 
             ViewBag.totalPrice = totalprice;
 

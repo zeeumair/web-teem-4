@@ -15,12 +15,16 @@ namespace Webshop.Controllers
     {
         private User userToUpdate;
         private User user;
+        private Microsoft.AspNetCore.Identity.SignInResult result;
+        private User currentUser;
 
         private UserManager<User> UserMgr { get; }
 
         private SignInManager<User> SignInMgr { get; }
 
         private IdentityAppContext _context { get; set; }
+        public Task<bool> IsKeyCustomer { get; private set; }
+        public double DiscountedPrice { get; private set; }
 
         private Task<User> GetCurrentUserAsync() => UserMgr.GetUserAsync(HttpContext.User);
 
@@ -73,6 +77,19 @@ namespace Webshop.Controllers
             return RedirectToAction("Index", "Products"); 
         }
 
+        public async Task<User> ChangeToKeyCustomer(User currentUser)
+        {
+
+            var orderHistory = _context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
+
+            if (orderHistory.Count() > 2)
+            {
+                await UserMgr.AddToRoleAsync(currentUser, "KeyCustomer");
+            }
+
+            return currentUser; 
+        }
+
         public IActionResult Login()
         {
             return View();
@@ -80,12 +97,26 @@ namespace Webshop.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(User model, string totalPrice)
         {
-            var result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
-
+            result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
 
             if (result.Succeeded && totalPrice != null)
             {
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
+               currentUser = await UserMgr.FindByEmailAsync(model.Email);
+
+               await ChangeToKeyCustomer(currentUser); 
+
+               IsKeyCustomer = UserMgr.IsInRoleAsync(currentUser, "KeyCustomer");
+               DiscountedPrice = Convert.ToDouble(totalPrice);
+
+                if (IsKeyCustomer.Result == true)
+                {
+                    DiscountedPrice = DiscountedPrice * 0.9;
+                    
+                    return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = DiscountedPrice.ToString(), keyCustomer = IsKeyCustomer.Result });
+                }
+
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, keyCustomer = IsKeyCustomer.Result });
+
             }
             if (result.Succeeded)
             {
@@ -122,6 +153,7 @@ namespace Webshop.Controllers
                 Currency = model.Currency
             };
             var result = await UserMgr.CreateAsync(user, model.Password);
+
 
             if (result.Succeeded && totalPrice != null)
             {

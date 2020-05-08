@@ -25,6 +25,9 @@
         <label>(Leave blank to use your registered address)</label>
         <br />
         <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
+        
+        <p style="color:red">@ViewBag.keyCustomer</p>
+        
         <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
         <input type="submit" id="submit" value="Order" />
