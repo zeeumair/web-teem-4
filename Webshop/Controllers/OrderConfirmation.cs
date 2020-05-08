@@ -78,7 +78,7 @@ namespace Webshop.Controllers
             var cartItems = HttpContext.Session.GetString("cartItems");
             foreach (var id in cartItems)
             {
-                if (!orderItems.Select(p => p.Product.Id == id - '0').Any())
+                if (!orderItems.Where(p => p.Product.Id == id - '0').Any())
                 {
                     orderItems.Add(
                     new OrderItem
