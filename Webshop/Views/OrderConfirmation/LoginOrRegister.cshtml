@@ -4,6 +4,12 @@
     ViewData["Title"] = "LoginOrRegister";
 }
 
+<head>
+
+    <link rel="stylesheet" href="~/css/OrderConfirmation/LoginOrRegister.css" />
+
+</head>
+
 <h4>Login</h4>
 <hr />
 <div class="row">
@@ -28,7 +34,7 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Login" class="btn btn-primary" />
             </div>
         </form>
         <div>
@@ -37,7 +43,7 @@
     </div>
 </div>
 
-<h4>User</h4>
+<h4>Register</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -91,10 +97,6 @@
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input asp-for="Currency" class="form-control" value="SEK" hidden/>
             </div>
 
             <div>
