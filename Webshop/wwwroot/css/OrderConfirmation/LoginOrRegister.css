@@ -3,9 +3,10 @@
     padding: 20px;
 }
 
-.float-child {
-    width: 50%;
+.inputFields {
+    width: 70% !important; 
     float: left;
     padding: 20px;
     border: 10px solid #fFFF;
 }
+

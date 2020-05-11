@@ -6,8 +6,14 @@ for details on configuring this project to bundle and minify static web assets. 
     margin-left:5%; 
 }
 
+.btn {
+    margin-bottom: 10%;
+}
 
-.mt-sm-0, .my-sm-0 {
+.float-child {
+    width: 65%;
+}
+    .mt-sm-0, .my-sm-0 {
     margin-top: 3% !important;
 }
 
@@ -74,11 +80,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
 #footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    line-height: 60px;
+    line-height:30px;
     background-color: #343a40 !important;
 }
 
