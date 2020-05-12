@@ -2,7 +2,8 @@
 Begin Web Test
     Open Browser                about:blank  ${BROWSER}
     Maximize Browser Window
-    Set Selenium Speed          0.2
+
+    Set Selenium Speed          0.0
 
 Go to Web Page
     Load page
@@ -110,7 +111,15 @@ Verify User is logged out
     ${link_text} =              Get Text  xpath:/html/body/header/nav/div/div/ul/li[2]/a[1]
     Should Be Equal             ${link_text}  Login
 
+Non specified User can't confirm order without login or register
+    Click Element               xpath:/html/body/header/nav/div/a
+    Click Link                  xpath:/html/body/div/main/table/tbody/tr/td[6]/a[2]
+    Click Element               xpath:/html/body/header/nav/div/div/ul/li[1]/a
+    Click Link                  Link:Confirm Order
 
+Verify User can't confirm order without login or register
+    ${link_text} =              Get Text  xpath:/html/body/div/main/h4[2]
+    Should Be Equal             ${link_text}  Register
 
 End Web Test
     Close Browser

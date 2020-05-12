@@ -62,6 +62,12 @@ User can Log out
     Log out from User Account
     Verify User is logged out
 
+User can't confirm order without login or register
+    [Documentation]             Test: The user wont be able to confirm an order without being registerd or log in first
+    [Tags]                      Verify Login or register to confirm order
+    Non specified User can't confirm order without login or register
+    Verify User can't confirm order without login or register
+
 
 
 
