@@ -29,7 +29,6 @@ namespace Webshop.Controllers
         private string recipient;
         private string subject;
         private string body;
-        private string orderId;
         //private IEnumerable<string> orderItems;
         private User currentUser;
         private Order order;
@@ -42,6 +41,9 @@ namespace Webshop.Controllers
         private string paymentOption;
         private string deliveryOption;
         private string currency;
+        private User user;
+        private Task<bool> isKeyCustomer;
+        private double discount;
 
         public OrderConfirmationController(IdentityAppContext context, IConfiguration config, UserManager<User> userMgr)
         {
@@ -51,17 +53,24 @@ namespace Webshop.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice)
         {
             if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
                 return RedirectToAction("index", "Products");
 
-            if (keyCustomer)
+            user = UserMgr.FindByNameAsync(User.Identity.Name).Result;
+            isKeyCustomer = UserMgr.IsInRoleAsync(user, "KeyCustomer");
+
+            if (isKeyCustomer.Result)
             {
-                ViewBag.keyCustomer = "You recived a 10% discount since you have been a loyal customer"; 
+                discount = Convert.ToDouble(totalprice) * 0.9; 
+                ViewBag.keyCustomer = "You recived a 10% discount since you have been a loyal customer";
+                ViewBag.totalPrice = discount.ToString(); 
+            } else
+            {
+                ViewBag.totalPrice = totalprice;
             }
 
-            ViewBag.totalPrice = totalprice;
 
             return View();
         }

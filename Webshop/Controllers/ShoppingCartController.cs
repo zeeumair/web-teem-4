@@ -13,7 +13,6 @@ namespace Webshop.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly IdentityAppContext _context;
-        private IQueryable<OrderItem> webshopContext;
         private List<string> orderItems;
         private List<OrderItem> orderItemToList;
 

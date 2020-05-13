@@ -105,28 +105,19 @@ namespace Webshop.Controllers
         public async Task<IActionResult> Login(User model, string totalPrice)
         {
             result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
+            currentUser = await UserMgr.FindByEmailAsync(model.Email);
 
             if (result.Succeeded && totalPrice != null)
             {
-               currentUser = await UserMgr.FindByEmailAsync(model.Email);
+                await ChangeToKeyCustomer(currentUser); 
 
-               await ChangeToKeyCustomer(currentUser); 
-
-               IsKeyCustomer = UserMgr.IsInRoleAsync(currentUser, "KeyCustomer");
-               DiscountedPrice = Convert.ToDouble(totalPrice);
-
-                if (IsKeyCustomer.Result == true)
-                {
-                    DiscountedPrice = DiscountedPrice * 0.9;
-                    
-                    return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = DiscountedPrice.ToString(), keyCustomer = IsKeyCustomer.Result });
-                }
-
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, keyCustomer = IsKeyCustomer.Result });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
 
             }
             if (result.Succeeded)
             {
+                await ChangeToKeyCustomer(currentUser);
+
                 return RedirectToAction("Index", "Products");
             }
 
