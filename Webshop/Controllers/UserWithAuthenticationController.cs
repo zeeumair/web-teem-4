@@ -189,6 +189,7 @@ namespace Webshop.Controllers
                 City = info.Principal.FindFirstValue(ClaimTypes.Locality),
                 Country = info.Principal.FindFirstValue(ClaimTypes.Country),
                 Currency = "SEK",
+                PhoneNumber = info.Principal.FindFirstValue(ClaimTypes.MobilePhone),
                 Password = null,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
