@@ -53,6 +53,9 @@ html {
   html {
     font-size: 16px;
   }
+  .navbar {
+      width: 100%;
+  }
 }
 
 .border-top {
