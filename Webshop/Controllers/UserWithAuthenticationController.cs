@@ -161,13 +161,16 @@ namespace Webshop.Controllers
             }
 
             var googleEmail = info.Principal.FindFirstValue(ClaimTypes.Email);
-
+            
             if (String.IsNullOrEmpty(googleEmail))
             {
                 ModelState.AddModelError(string.Empty, "Could not find an email associated with your google account. Make sure your Google account has a registered email address.");
                 return RedirectToAction("Login");
             }
-            if (_context.Users.Where(u => u.Email == googleEmail).Any())
+
+            var matchingUser = _context.Users.Where(u => u.Email == googleEmail).FirstOrDefault();
+
+            if (matchingUser != null && !_context.UserLogins.Where(u => u.UserId == matchingUser.Id).Any())
             {
                 ModelState.AddModelError(string.Empty, "An account with that email address already exists.");
                 return RedirectToAction("Login");
