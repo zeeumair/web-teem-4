@@ -1,0 +1,54 @@
+﻿@model Webshop.Models.User
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+<div>
+
+    @ViewBag.Result
+</div>
+
+<head>
+
+    <link rel="stylesheet" href="~/css/UserWithAuthentication/Login.css" />
+
+</head>
+
+<h1>Register</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
+        </form>
+        <div>
+            <a asp-action="ForgotPassword" asp-controller="UserWithAuthentication">Forgot Password</a>
+        </div>
+    </div>
+</div>
+
+
+
+

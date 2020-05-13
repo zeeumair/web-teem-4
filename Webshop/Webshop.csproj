@@ -5,14 +5,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200423142030_CreateIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423142030_CreateIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423142547_CreateIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423142547_CreateIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423222719_createIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423222719_createIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423222911_createIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423222911_createIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200423223152_createIdentityScheme.cs" />
+    <Compile Remove="Migrations\20200423223152_createIdentityScheme.Designer.cs" />
+    <Compile Remove="Migrations\20200424123137_AddCurrencyTable.cs" />
+    <Compile Remove="Migrations\20200424123137_AddCurrencyTable.Designer.cs" />
+    <Compile Remove="Migrations\20200426005804_updatedPriceModel.cs" />
+    <Compile Remove="Migrations\20200426005804_updatedPriceModel.Designer.cs" />
+    <Compile Remove="Migrations\20200507090814_addedIddbset.cs" />
+    <Compile Remove="Migrations\20200507090814_addedIddbset.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Images\airJordans.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="IronPdf" Version="2020.3.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

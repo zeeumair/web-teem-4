@@ -19,8 +19,8 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Price)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+        <dd class="col-sm-10">
+            @CurrencyManager.CalcPrice(Model.Price, HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Image)
