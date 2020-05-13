@@ -3,35 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
-using Webshop.Data;
 using Webshop.Models;
 
 namespace Webshop.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly WebshopContext _context;
-
-        public OrdersController(WebshopContext context)
+        private readonly IdentityAppContext _context;
+        private UserManager<User> UserMgr { get; }
+        private Task<User> GetCurrentUserAsync() => UserMgr.GetUserAsync(HttpContext.User);
+        public OrdersController(IdentityAppContext context, UserManager<User> userMgr)
         {
             _context = context;
+            UserMgr = userMgr;
+
         }
 
-        public async Task<IActionResult> OrderHistory(int? id)
+        public async Task<IActionResult> OrderHistory()
         {
-            var userId = 0;
-            if (id != null)
+            var currentUser = await GetCurrentUserAsync();
+
+            try
             {
-                userId = _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync().Id;
-                return View(await _context.Orders.Where(x => x.User.Id == userId).ToListAsync());
+                return View(await _context.Orders.Where(x => x.User.Id == currentUser.Id).ToListAsync());
             }
-            else
+            catch
             {
-                return View(await _context.Orders.ToListAsync());
+                return NoContent();
             }
         }
 
