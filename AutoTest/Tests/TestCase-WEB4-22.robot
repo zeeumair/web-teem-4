@@ -25,11 +25,6 @@ User can access Webshop page
     [Tags]                      Access Webshop main page
     Go to Web Page
 
-User cannot Register with Invalid E-mail
-    [Documentation]             Test: User shouldn't be able to Register with invalid type of E-mail adress
-    [Tags]                      Invalid E-mail type given
-    Register account with Invalid E-mail
-
 User cannot create User account
     [Documentation]             Test: The user should be able to switch to Register page from the header menu to create account
     [Tags]                      User wouldn't be able to register a new User with same E-mail.
