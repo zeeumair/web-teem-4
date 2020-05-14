@@ -58,19 +58,19 @@
                 <td class="align-middle">
                     <h2>
                         @CurrencyManager.CalcPrice(item.Price * quantity,
-                                     HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                      HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
                     </h2>
                 </td>
 
             </tr>
-        }
+                        }
     </tbody>
     <tfoot>
         <tr>
             <td class="justify-content-center" colspan="4">
                 <h4 class="text-center">
                     Total cost: @CurrencyManager.CalcPrice(Model.Sum(p => p.Price),
-                                    HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+         HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
                     @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
                 </h4>
             </td>
@@ -78,6 +78,7 @@
     </tfoot>
 </table>
 <Span class="float-right mr-2">
+    @Html.ActionLink("Clear Cart", "ClearShoppingCart", "ShoppingCart", null, new { @class = $"btn btn-danger {(String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("cartItems")) ? "disabled" : "")}" })
     @{ 
         string classNames;
         classNames = @Model.Count() <= 0 ? "btn btn-danger disabled" : "btn btn-success";
