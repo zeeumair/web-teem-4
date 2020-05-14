@@ -15,6 +15,12 @@ Load page
 Verify start page loaded
     ${link_text} = 		        Get Text  class:navbar-brand
     Should Be Equal		        ${link_text}  Webshop
+Register account with Invalid E-mail
+    Click Link                 xpath:/html/body/header/nav/div/div/ul/li[2]/a[2]
+    Enter Email                Nills@top.top
+    Alert should be present    action=LEAVE
+    Scroll element into view   xpath:/html/body/header/nav/div/div/ul/li[2]/a[2]
+    Capture page screenshot
 
 Register User account
     [Arguments]                  ${email_text}  ${password}
