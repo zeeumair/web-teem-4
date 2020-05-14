@@ -51,18 +51,25 @@
             <td>
                 <form asp-controller="Orders" asp-action="AddReview" method="post">
                     <input type="hidden" name="productId" value="@item.ProductId" />
+
                     <select id="stars" name="stars">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
+                    @{
+                        var review = ViewBag.Reviews.Dequeue();
+                        for (int i = 1; i < 6; i++)
+                        {
+                            @:<option @if (review.Stars == i) {
+                                            @:selected 
+                                      } value="@i">@i</option>
+                        }
+                    }
                     </select>
-                    <input type="text" id="description" name="description" />
-                    <input type="submit" id="submitReview" value="Save Review" class="btn btn-dark" />
+                    <input type="text" id="description" name="description" value="@review.Description" />
+                    <input type="submit" id="submitReview" value="Save Review" class="btn btn-primary" />
                 </form>
             </td>
         </tr>
-}        
+}
     </tbody>
 </table>
+
+<a asp-controller="UserWithAuthentication" asp-action="Edit" id="backToMyPage">Back to My page</a>

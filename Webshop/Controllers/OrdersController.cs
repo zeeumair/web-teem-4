@@ -61,20 +61,14 @@ namespace Webshop.Controllers
         {
             var currentUser = await GetCurrentUserAsync();
             ViewBag.OrderId = id;
-            var reviews = new List<Review>();
+            var reviews = new Queue<Review>();
             var orderItems = await _context.OrderItems.Where(x => x.Order.Id == id).Include("Product").ToListAsync();
             
             foreach (var item in orderItems)
             {
                 var review = await _context.Reviews.Where(x => x.ProductId == item.Product.Id && x.User.Id == currentUser.Id).FirstOrDefaultAsync();
-                if (review != null)
-                {
-                    reviews.Add(review);
-                }
-                else
-                {
-                    reviews.Add(null);
-                }
+                review ??= new Review{ Stars = 5 };
+                reviews.Enqueue(review);
             }
             ViewBag.Reviews = reviews;
             return View(orderItems);
@@ -83,8 +77,12 @@ namespace Webshop.Controllers
         public async Task<IActionResult> AddReview(int productId, int stars, string description)
         {
             var currentUser = await GetCurrentUserAsync();
-            if (false) // Här ska vi kolla om den finns, isf ska vi bara uppdatera.
+            var review = await _context.Reviews.Where(x=> x.ProductId == productId && x.UserId == currentUser.Id).FirstOrDefaultAsync();
+            if (review != null) 
             {
+                review.Stars = stars;
+                review.Description = description;
+                _context.Reviews.Update(review);
             }
             else
             {
