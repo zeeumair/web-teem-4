@@ -2,7 +2,7 @@
 Begin Web Test
     Open Browser                about:blank  ${BROWSER}
     Maximize Browser Window
-    Set Selenium Speed          0.3
+    Set Selenium Speed          0.6
 
 Go to Web Page
     Load page
