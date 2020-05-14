@@ -67,7 +67,9 @@ namespace Webshop
                                 Country = "Sweden",
                                 Email = "test@testuser.com",
                                 Currency = "SEK",
-                                PhoneNumber = "0700000000"
+                                PhoneNumber = "0700000000",
+                                SecurityStamp = Guid.NewGuid().ToString()
+
                             },
                             PaymentOption = "Swish",
                             TotalAmount = 11.11,
@@ -83,76 +85,6 @@ namespace Webshop
                             CreatedAt = DateTime.Today
                         },
                         Quantity = 1
-                    },
-                    new OrderItem
-                    {
-                        Order = new Order
-                        {
-                            User = context.Users.Any() ?
-                            context.Users.Where(u => u.Id == 1).First() :
-                            new User
-                            {
-                                FirstName = "Test",
-                                LastName = "User",
-                                //Username = "testuser1",
-                                Password = "password",
-                                StreetAdress = "Gogubbegatan 3",
-                                PostNumber = "41706",
-                                City = "Gothenburg",
-                                Country = "Sweden",
-                                Email = "test@testuser.com",
-                                Currency = "SEK",
-                                PhoneNumber = "0700000000"
-                            },
-                            PaymentOption = "Swish",
-                            TotalAmount = 11.11,
-                            DeliveryOption = "Express"
-                        },
-                        Product = new Product
-                        {
-                            Name = "Nike Mercurial Vapor",
-                            Price = 100,
-                            Image = ReadFile("Images/NikeMercurialVapor.jpg"),
-                            Description = "Play Ball like Messi",
-                            Category = "sport",
-                            CreatedAt = DateTime.Today
-                        },
-                        Quantity = 2
-                    },
-                    new OrderItem
-                    {
-                        Order = new Order
-                        {
-                            User = context.Users.Any() ?
-                            context.Users.Where(u => u.Id == 1).First() :
-                            new User
-                            {
-                                FirstName = "Test",
-                                LastName = "User",
-                                //Username = "testuser1",
-                                Password = "password",
-                                StreetAdress = "Gogubbegatan 3",
-                                PostNumber = "41706",
-                                City = "Gothenburg",
-                                Country = "Sweden",
-                                Email = "test@testuser.com",
-                                Currency = "SEK",
-                                PhoneNumber = "0700000000"
-                            },
-                            PaymentOption = "Swish",
-                            TotalAmount = 11.11,
-                            DeliveryOption = "Express"
-                        },
-                       Product = new Product
-                        {
-                            Name = "airJordans",
-                            Price = 100,
-                            Image = ReadFile("Images/airJordans.jpg"),
-                            Description = "Fly high like Michael",
-                            Category = "sport",
-                            CreatedAt = DateTime.Today
-                        },
-                        Quantity = 3
                     });
                 }
                 if(!context.Currencies.Any())

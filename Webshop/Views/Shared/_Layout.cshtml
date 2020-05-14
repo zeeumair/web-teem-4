@@ -31,41 +31,41 @@
                                 <a asp-controller="UserWithAuthentication" asp-action="Edit">Min Sida</a>
 
 
-                            }
-                            else
-                            {
-                                <a asp-controller="UserWithAuthentication" asp-action="Login">Login</a>
-                                <a asp-controller="UserWithAuthentication" asp-action="Register">Register</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="UserWithAuthentication" asp-action="Login">Login</a>
+                            <a asp-controller="UserWithAuthentication" asp-action="Register">Register</a>
 
-                            }
-
-
-                        </li>
-
-                        @{ if (ViewBag.HideCurrencyConversion == null)
-                           {
-                                <li class="scrollableCollapse">
-                                    <a class="btn btn-secondary" role="button" data-toggle="collapse" href="#currencyListContainer">
-                                        @{
-                                            if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
-                                            {
-                                                <h6 id="currentCurrency">Currency: SEK</h6>
-                                            }
-                                            else
-                                            {
-                                                <h6 id="currentCurrency">Currency: @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</h6>
-                                            }
-                                        }
-                                    </a>
-                                    <div id="currencyListContainer" class="collapse">
-                                        <ul id="currencyList" class="list-group">
-                                        </ul>
-                                    </div>
-                                </li>
-                           }
                         }
 
-                    </ul>
+
+                            </li>
+
+                            @{ if (ViewBag.HideCurrencyConversion == null)
+                                {
+                                    <li class="scrollableCollapse">
+                                        <a class="btn btn-secondary" role="button" data-toggle="collapse" href="#currencyListContainer">
+                                            @{
+                                                if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
+                                                {
+                                                    <h6 id="currentCurrency">Currency: SEK</h6>
+                                                }
+                                                else
+                                                {
+                                                    <h6 id="currentCurrency">Currency: @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</h6>
+                                                }
+                                            }
+                                        </a>
+                                        <div id="currencyListContainer" class="collapse">
+                                            <ul id="currencyList" class="list-group">
+                                            </ul>
+                                        </div>
+                                    </li>
+                                }
+                            }
+
+                        </ul>
                 </div>
             </div>
         </nav>

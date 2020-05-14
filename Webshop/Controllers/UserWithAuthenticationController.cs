@@ -15,12 +15,22 @@ namespace Webshop.Controllers
     {
         private User userToUpdate;
         private User user;
+        private Microsoft.AspNetCore.Identity.SignInResult result;
+        private User currentUser;
+        private IQueryable<OrderItem> orderHistory;
+        private string token;
+        private string passwordResetLink;
+        private string to;
+        private string subject;
+        private string body;
 
         private UserManager<User> UserMgr { get; }
 
         private SignInManager<User> SignInMgr { get; }
 
         private IdentityAppContext _context { get; set; }
+        public Task<bool> IsKeyCustomer { get; private set; }
+        public double DiscountedPrice { get; private set; }
 
         private Task<User> GetCurrentUserAsync() => UserMgr.GetUserAsync(HttpContext.User);
 
@@ -41,6 +51,8 @@ namespace Webshop.Controllers
 
             return View(user); 
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,26 +76,54 @@ namespace Webshop.Controllers
 
             return View(userToUpdate);
         }
-        
+
         public async Task<IActionResult> Logout()
         {
             await SignInMgr.SignOutAsync();
             return RedirectToAction("Index", "Products"); 
         }
 
+        public async Task<User> ChangeToKeyCustomer(User currentUser)
+        {
+
+             orderHistory = _context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
+
+            if (orderHistory.Count() > 2)
+            {
+                await UserMgr.AddToRoleAsync(currentUser, "KeyCustomer");
+            }
+
+            return currentUser; 
+        }
+
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(User model, string totalPrice)
         {
-            var result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
-
+            result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
 
             if (result.Succeeded && totalPrice != null)
             {
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency});
+               currentUser = await UserMgr.FindByEmailAsync(model.Email);
+
+               await ChangeToKeyCustomer(currentUser); 
+
+               IsKeyCustomer = UserMgr.IsInRoleAsync(currentUser, "KeyCustomer");
+               DiscountedPrice = Convert.ToDouble(totalPrice);
+
+                if (IsKeyCustomer.Result == true)
+                {
+                    DiscountedPrice = DiscountedPrice * 0.9;
+                    
+                    return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = DiscountedPrice.ToString(), keyCustomer = IsKeyCustomer.Result });
+                }
+
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, keyCustomer = IsKeyCustomer.Result });
+
             }
             if (result.Succeeded)
             {
@@ -117,15 +157,19 @@ namespace Webshop.Controllers
                 PostNumber = model.PostNumber,
                 CreatedAt = DateTime.Now,
                 PhoneNumber = model.PhoneNumber,
-                Currency = model.Currency
+                Currency = model.Currency,
+                Country = model.Country
+                
             };
+            
             var result = await UserMgr.CreateAsync(user, model.Password);
+
 
             if (result.Succeeded && totalPrice != null)
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);
 
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
             }
             if (result.Succeeded)
             {
@@ -157,11 +201,11 @@ namespace Webshop.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserMgr.FindByEmailAsync(model.Email);
+
                 if (user != null)
                 {
-                    var token = await UserMgr.GeneratePasswordResetTokenAsync(user);
-
-                    var passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
+                     token = await UserMgr.GeneratePasswordResetTokenAsync(user);
+                     passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
                         new { token = token , email = model.Email}, Request.Scheme);
 
                     SendResetPasswordLink(passwordResetLink, model.Email);
@@ -177,12 +221,9 @@ namespace Webshop.Controllers
 
         public IActionResult SendResetPasswordLink(string resetPasswordLink, string email)
         {
-
-
-
-            string to = email;
-            string subject = "Reset Password";
-            string body = $"Please click the link to reset your password {resetPasswordLink}";
+            to = email;
+            subject = "Reset Password";
+            body = $"Please click the link to reset your password {resetPasswordLink}";
             MailMessage mm = new MailMessage();
             mm.To.Add(to);
             mm.Subject = subject;

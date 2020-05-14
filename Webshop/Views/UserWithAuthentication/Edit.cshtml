@@ -4,6 +4,11 @@
     ViewData["Title"] = "Edit";
 }
 
+<head>
+
+    <link rel="stylesheet" href="~/css/UserWithAuthentication/Edit.css" />
+
+</head>
 
 <hr />
 <div class="row">
@@ -40,11 +45,6 @@
                 <input asp-for="Country" class="form-control" />
                 <span asp-validation-for="Country" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Currency" class="control-label"></label>
-                <input asp-for="Currency" class="form-control" />
-                <span asp-validation-for="Currency" class="text-danger"></span>
-            </div>
 
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -62,6 +62,7 @@
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+        @Html.ActionLink("View Order History", "OrderHistory", "Orders", null, new { id = "OrderHistoryLink" })
     </div>
 </div>
 
