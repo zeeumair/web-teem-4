@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Order Items History";
+    var index = -1;
 }
 
     <h1>Order History, @Html.DisplayNameFor(model => model.OrderId) : @ViewBag.OrderId</h1>
@@ -22,15 +23,13 @@
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                Give Stars (In development)
-            </th>
-            <th>
-                Write Review (In development)
+                Review Product
             </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Product.Name)
@@ -39,6 +38,7 @@
                 @{
                     var base64 = Convert.ToBase64String(item.Product.Image);
                     var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                    index++;
                 }
                 <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
             </td>
@@ -49,12 +49,20 @@
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                <!-- This is where the input for stars goes-->
-            </td>
-            <td>
-                <!-- This is where the input for text goes-->
+                <form asp-controller="Orders" asp-action="AddReview" method="post">
+                    <input type="hidden" name="productId" value="@item.ProductId" />
+                    <select id="stars" name="stars">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <input type="text" id="description" name="description" />
+                    <input type="submit" id="submitReview" value="Save Review" class="btn btn-dark" />
+                </form>
             </td>
         </tr>
-}
+}        
     </tbody>
 </table>
