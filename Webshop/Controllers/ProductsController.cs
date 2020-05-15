@@ -20,7 +20,23 @@ namespace Webshop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Products.ToListAsync());
+            Queue<double> averageStars = new Queue<double>();
+            var products = await _context.Products.ToListAsync();
+            foreach (var product in products)
+            {
+                var reviews = await _context.Reviews.Where(x => x.ProductId == product.Id).ToListAsync();
+                if (reviews.Any())
+                {
+                   averageStars.Enqueue(reviews.Average(x => x.Stars));
+                }
+                else
+                {
+                    averageStars.Enqueue(-1);
+                }
+                
+            }
+            ViewBag.AverageStars = averageStars;
+            return View(products);
         }
 
         public async Task<IActionResult> Details(int? id)

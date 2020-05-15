@@ -3,61 +3,39 @@
 @{
     ViewData["Title"] = "Index";
 }
+<div class="col-12">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-5 col-sm-12 col-lg-3 d-inline-block mr-2 ml-2">
+            @{
+                var base64 = Convert.ToBase64String(item.Image);
+                var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+            }
+            <img src="@imgSrc" style="max-width: 200px; max-height:200px" />
+            <div>
+                <h2>@Html.DisplayFor(modelItem => item.Name)</h2>
+                <p class="mb-1">@Html.DisplayFor(modelItem => item.Description)</p>
+                <h3>
+                    @{
+                        var averageStars = ViewBag.AverageStars.Dequeue();
+                        if (averageStars == -1)
+                        {
+                            @:No Rating
+                        }
+                        else
+                        {
+                            @:@averageStars Stars
+                        }
+                    }
+                </h3>
+                <b>@Html.DisplayFor(modelItem => item.Category)</b>
+                <h4><i>@CurrencyManager.CalcPrice(item.Price, HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</i></h4>
+            </div>
+            <div>
+                <a asp-action="Details" asp-route-id="@item.Id" id="@item.Id" class="btn btn-dark col-12 mb-1">Details</a>
+                @Html.ActionLink("Add to Shopping Cart", "AddProductToCart", "ShoppingCart", new { id = item.Id, userEmail = User.Identity.Name }, new { @class = "btn btn-dark col-12", @id = "AddToShoppingCart" })
+            </div>
+        </div>
+    }
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @CurrencyManager.CalcPrice(item.Price, HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
-            </td>
-            <td>
-                @{
-                    var base64 = Convert.ToBase64String(item.Image);
-                    var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
-                }
-                <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
-
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id" id="@item.Id" class="btn btn-dark">Details</a>
-
-
-               
-
-                    @Html.ActionLink("Add to Shopping Cart", "AddProductToCart", "ShoppingCart", new { id = item.Id, userEmail = User.Identity.Name }, null)
-
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
