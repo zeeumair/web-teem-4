@@ -18,13 +18,11 @@ namespace Webshop.Controllers
             _context = context;
         }
 
-        // GET: Products
         public async Task<IActionResult> Index()
         {
             return View(await _context.Products.ToListAsync());
         }
 
-        // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,13 +30,13 @@ namespace Webshop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
             }
-
+            var reviews = await _context.Reviews.Where(x => x.ProductId == id).ToListAsync();
+            ViewBag.Reviews = reviews;
             return View(product);
         }
 
