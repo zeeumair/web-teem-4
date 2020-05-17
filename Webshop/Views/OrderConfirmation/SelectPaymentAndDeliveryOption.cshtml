@@ -2,11 +2,12 @@
 @Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
 
 
-<head>
+    <head>
 
-    <link rel="stylesheet" href="~/css/OrderConfirmation/SelectPaymentAndDeliveryOption.css" />
+        <link rel="stylesheet" href="~/css/OrderConfirmation/SelectPaymentAndDeliveryOption.css" />
+        <script src="~/js/PostnordAPI/PostnordAPI.js" asp-append-version="true" type="text/javascript"></script>
 
-</head>
+    </head>
 
 <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
     <label>Payment Type</label>
@@ -18,7 +19,7 @@
     <br />
 
     <label>Delivery Time</label>
-
+    <input type="hidden" id="Country" value="@ViewBag.Country" />
     <select id="deliveryTime" name="deliveryTime">
         <option value="2-5 days">2-5 Days</option>
         <option value="5-10 days">5-10 Days</option>

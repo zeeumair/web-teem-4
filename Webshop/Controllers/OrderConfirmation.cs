@@ -51,8 +51,9 @@ namespace Webshop.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
+        public async Task<ActionResult> SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
         {
+            var currentCustomer = await GetCurrentUserAsync();
             if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
                 return RedirectToAction("index", "Products");
 
@@ -60,7 +61,7 @@ namespace Webshop.Controllers
             {
                 ViewBag.keyCustomer = "You recived a 10% discount since you have been a loyal customer"; 
             }
-
+            ViewBag.Country = currentCustomer.Country;
             ViewBag.totalPrice = totalprice;
 
             return View();
