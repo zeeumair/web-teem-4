@@ -96,3 +96,8 @@ body {
     max-height: 20vh;
     overflow-y: auto;
 }
+
+#google-logo {
+    max-height: 1rem;
+    max-width: 1rem;
+}
