@@ -4,84 +4,95 @@
     ViewData["Title"] = "Index";
 }
 
-@Html.ActionLink("Back", "Index", "/", null, null)
+@Html.ActionLink("Back", "Index", "/", null, new { @class = "btn btn-dark" })
 
-<table class="table text-center">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                Quantity
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            decimal sum = 0;
-        }
-        @foreach (var item in Model)
-        {
-            var quantity = HttpContextAccessor.HttpContext.Session.GetString("cartItems").Count(p => p.ToString() == item.Id.ToString());
-            var price = Math.Round(item.Price * quantity, 2);
-            sum += price;
-            <tr>
-                <td class="align-middle">
-                    @{
-                        var base64 = Convert.ToBase64String(item.Image);
-                        var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
-                    }
-                    <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
-                    <h2 class="align-content-center">@Html.DisplayFor(modelItem => item.Name)</h2>
-                </td>
-                <td class="align-middle">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <form asp-controller="ShoppingCart" asp-action="AddProductToCart" method="get">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <input type="submit" value="+" class="btn btn-success btn-sm py-0" />
-                            </form>
-                        </div>
-                        <h4 class="mx-auto">@quantity</h4>
-                        <div class="input-group-append">
-                            <form asp-controller="ShoppingCart" asp-action="DecrementProductQuantity" method="post">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <input type="submit" value="-" class="btn btn-danger btn-sm py-0" />
-                            </form>
-                        </div>
-                    </div>
-                </td>
-                <td class="align-middle">
-                    <h2>
-                        @CurrencyManager.CalcPrice(item.Price * quantity,
-                      HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
-                    </h2>
-                </td>
+    <div class="table-responsive-sm">
+        <table class="table text-center">
+            <thead>
+                <tr>
+                    <th>
+                        Product
+                    </th>
+                    <th>
+                        Unit Price
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    decimal sum = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    var quantity = HttpContextAccessor.HttpContext.Session.GetString("cartItems").Count(p => p.ToString() == item.Id.ToString());
+                    var price = Math.Round(item.Price * quantity, 2);
+                    sum += price;
+                    <tr>
+                        <td class="align-middle">
+                            @{
+                                var base64 = Convert.ToBase64String(item.Image);
+                                var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                            }
+                            <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
+                            <h2 class="align-content-center">@Html.DisplayFor(modelItem => item.Name)</h2>
+                        </td>
+                        <td class="align-middle">
+                            <h2>
+                                @CurrencyManager.CalcPrice(item.Price,
+                                                HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                                @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
+                            </h2>
+                        </td>
+                        <td class="align-middle">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <form asp-controller="ShoppingCart" asp-action="AddProductToCart" method="get">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="submit" value="+" class="btn btn-success btn-sm py-0" />
+                                    </form>
+                                </div>
+                                <h4 class="mx-auto">@quantity</h4>
+                                <div class="input-group-append">
+                                    <form asp-controller="ShoppingCart" asp-action="DecrementProductQuantity" method="post">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="submit" value="-" class="btn btn-danger btn-sm py-0" />
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle">
+                            <h2>
+                                @CurrencyManager.CalcPrice(item.Price * quantity,
+                                             HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                                @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
+                            </h2>
+                        </td>
 
-            </tr>
-                        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <td class="justify-content-center" colspan="4">
-                <h4 class="text-center">
-                    Total cost: @CurrencyManager.CalcPrice(Model.Sum(p => p.Price),
-         HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
-                    @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
-                </h4>
-            </td>
-        </tr>
-    </tfoot>
-</table>
-<Span class="float-right mr-2">
-    @Html.ActionLink("Clear Cart", "ClearShoppingCart", "ShoppingCart", null, new { @class = $"btn btn-danger {(String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("cartItems")) ? "disabled" : "")}" })
-    @{ 
-        string classNames;
-        classNames = @Model.Count() <= 0 ? "btn btn-danger disabled" : "btn btn-success";
-    }
-    @Html.ActionLink("Confirm Order", "LoginOrRegister", "OrderConfirmation", new { totalprice = sum.ToString() }, new { @class = $"btn {classNames}"})
-</Span>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="justify-content-center" colspan="4">
+                        <h4 class="text-center">
+                            Total cost: @CurrencyManager.CalcPrice(Model.Sum(p => p.Price),
+                                HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                            @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
+                        </h4>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <Span class="float-right mr-2">
+            @{
+                string classNames = @Model.Count() <= 0 ? "disabled" : "";
+            }
+            @Html.ActionLink("Confirm Order", "LoginOrRegister", "OrderConfirmation", new { totalprice = sum.ToString() }, new { @class = $"btn btn-dark {classNames}" })
+        </Span>
+    </div>

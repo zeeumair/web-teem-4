@@ -1,2 +1,7 @@
 ﻿body {
 }
+
+#google-logo {
+    max-height: 1rem;
+    max-width: 1rem;
+}
