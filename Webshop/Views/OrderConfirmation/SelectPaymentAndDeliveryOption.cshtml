@@ -1,6 +1,4 @@
 
-@Html.ActionLink("Back", "Index", "ShoppingCart", null, null)
-
 
 <head>
 
@@ -8,34 +6,41 @@
 
 </head>
 
+
 <form method="post" action="@Url.Action("Confirmation", "OrderConfirmation")">
     <label>Payment Type</label>
+    <br />
 
-    <select id="paymentType" name="paymentType">
+    <select id="paymentType" name="paymentType" class="btn-dark" style="width:20%;">
         <option value="Swish">Swish</option>
         <option value="Invoice">Invoice</option>
     </select>
     <br />
 
     <label>Delivery Time</label>
+    <br />
 
-    <select id="deliveryTime" name="deliveryTime">
+    <select id="deliveryTime" name="deliveryTime" class="btn-dark" style="width:20%;">
         <option value="2-5 days">2-5 Days</option>
         <option value="5-10 days">5-10 Days</option>
         <option value="30 days">30 Days</option>
     </select>
 
     <br />
-    <h2>Email Address</h2>
-    <input type="email" name="email" />
-    <label>(Leave blank to use your registered address)</label>
-    <br />
-    <label>Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
 
-    <p style="color:red">@ViewBag.keyCustomer</p>
+    <label>Email Address</label>
+    <br />
+    <input type="email" name="email" id="email" style="width:20%;" placeholder="Optional" />
+
+    <br />
+
+    <label style="font-style:italic;">Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
+
+    <p style="color:darkblue">@ViewBag.keyCustomer</p>
 
     <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
-    <input type="submit" id="submit" value="Order" />
+    <input type="submit" id="submit" value="Order" class="btn btn-dark">
     <br />
+
 </form>

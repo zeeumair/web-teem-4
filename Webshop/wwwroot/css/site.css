@@ -1,13 +1,34 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+#footer_text{
+    color:white; 
+    margin-left:5%; 
 }
 
-/* Provide sufficient contrast against white background */
+.btn {
+    margin-bottom: 10%;
+}
+
+.float-child {
+    width: 65%;
+}
+    .mt-sm-0, .my-sm-0 {
+    margin-top: 3% !important;
+}
+
+.list-group-item {
+    font-size: 0.5rem !important;
+    padding: .25rem 1.25rem;
+}
+
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
 a {
   color: #0366d6;
 }
@@ -24,14 +45,16 @@ a {
   border-color: #1861ac;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
+
 html {
   font-size: 14px;
 }
 @media (min-width: 768px) {
   html {
     font-size: 16px;
+  }
+  .navbar {
+      width: 100%;
   }
 }
 
@@ -51,26 +74,30 @@ button.accept-policy {
   line-height: inherit;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
+
 html {
   position: relative;
   min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    line-height:30px;
+    background-color: #343a40 !important;
 }
 
 .scrollableCollapse {
     max-height: 20vh;
     overflow-y: auto;
+}
+
+#google-logo {
+    max-height: 1rem;
+    max-width: 1rem;
 }

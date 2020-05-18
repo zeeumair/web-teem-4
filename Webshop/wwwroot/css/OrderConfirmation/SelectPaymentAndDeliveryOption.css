@@ -1,2 +1,5 @@
-﻿body {
+﻿
+.paymentType{
+    width: 30%; 
+    color: red; 
 }

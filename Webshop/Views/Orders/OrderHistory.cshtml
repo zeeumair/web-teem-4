@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Webshop.Models.Order>
+
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<h1>Order History</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PaymentOption)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeliveryOption)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Confirmed)
+            </th>
+            <th>Items</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentOption)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeliveryOption)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Confirmed)
+            </td>
+            <td>
+                @Html.ActionLink("View items", "OrderItemsHistory", "Orders", new { id = item.Id }, null)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

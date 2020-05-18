@@ -117,9 +117,18 @@ namespace Webshop
             {
                 context.Currencies.Add(new Currency
                 {
-                    CurrencyCode = item.Key,
-                    CurrencyRate = item.Value
-                });
+                    var currencyRates = CurrencyManager.GetCurrencyRates().Result;
+                    foreach (KeyValuePair<string, double> item in  currencyRates.Rates)
+                    {
+                        context.Currencies.Add(new Currency
+                        {
+                            CurrencyCode = item.Key,
+                            CurrencyRate = item.Value,
+                            LastUpdated = currencyRates.Date
+                        });
+                    }
+                }
+                context.SaveChanges();
             }
             context.SaveChanges();
             context.Dispose();

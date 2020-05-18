@@ -29,7 +29,25 @@ namespace Webshop.Controllers
                 HttpContext.Session.SetString("currencyCode", "SEK");
                 HttpContext.Session.SetString("currencyRate", "1");
             }
-            return await _context.Currencies.ToListAsync();
+            var currencyList = await _context.Currencies.ToListAsync();
+            if (currencyList.FirstOrDefault().LastUpdated.AddHours(24) < DateTimeOffset.UtcNow)
+            {
+                var currencyRates = await CurrencyManager.GetCurrencyRates();
+                var currencies = await _context.Currencies.ToListAsync();
+                currencies.ForEach(currency =>
+                {
+                    foreach (KeyValuePair<string, double> item in currencyRates.Rates)
+                    {
+                        if(item.Key == currency.CurrencyCode)
+                        {
+                            currency.CurrencyRate = item.Value;
+                            currency.LastUpdated = currencyRates.Date;
+                        }   
+                    }
+                });
+                await _context.SaveChangesAsync();
+            }
+            return currencyList;
         }
 
         [HttpGet("{id}")]
