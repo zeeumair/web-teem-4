@@ -5,6 +5,7 @@ using System.Linq;
 using Webshop.Models;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace Webshop
 {
@@ -34,141 +35,95 @@ namespace Webshop
 
             return data;
         }
+
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            using (var context = new IdentityAppContext(
-                serviceProvider.GetRequiredService<
-                    DbContextOptions<IdentityAppContext>>()))
+            var context = new IdentityAppContext(serviceProvider.GetRequiredService<DbContextOptions<IdentityAppContext>>());
+            context.Database.EnsureDeleted();
+            context.Database.Migrate();
+
+            var user = new User
             {
-
-                if (context.Users.Any() && context.OrderItems.Any() && context.Currencies.Any())
+                FirstName = "Test",
+                LastName = "User",
+                Password = "!1Aaaa",
+                StreetAdress = "Gogubbegatan 3",
+                PostNumber = "41706",
+                City = "Gothenburg",
+                Country = "Sweden",
+                Email = "omgzshoezz@gmail.com",
+                Currency = "SEK",
+                PhoneNumber = "0700000000",
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = "omgzshoezz@gmail.com"
+            };
+            var passwordHasher = new PasswordHasher<User>();
+            user.PasswordHash = passwordHasher.HashPassword(user, "!1Aaaa");
+            var manager = serviceProvider.GetRequiredService<UserManager<User>>();
+            manager.CreateAsync(user).Wait();
+            
+            var products = new List<Product> { 
+                new Product
                 {
-                    return;
-                }
-
-                if (!context.OrderItems.Any())
+                    Name = "Air Jordans",
+                    Price = 100,
+                    Image = ReadFile("Images/airJordans.jpg"),
+                    Description = "Fly high like Michael",
+                    Category = "sport",
+                    CreatedAt = DateTime.Today
+                },
+                new Product
                 {
-                    context.OrderItems.AddRange(
+                    Name = "Nike Air Zoom",
+                    Price = 100,
+                    Image = ReadFile("Images/NikeAirZoom.jpg"),
+                    Description = "Do something like someone",
+                    Category = "sport",
+                    CreatedAt = DateTime.Today
+                },
+                new Product
+                {
+                    Name = "Nike Mercurial Vapor",
+                    Price = 100,
+                    Image = ReadFile("Images/NikeMercurialVapor.jpg"),
+                    Description = "Play Ball like Messi",
+                    Category = "sport",
+                    CreatedAt = DateTime.Today
+                } 
+            };
+
+            var order = new Order
+            {
+                User = context.Users.FirstOrDefault(),
+                PaymentOption = "Swish",
+                TotalAmount = 300,
+                DeliveryOption = "2-5 days"
+            };
+
+            var orderItems = new List<OrderItem>();
+            products.ForEach(product => {
+                orderItems.Add(
                     new OrderItem
                     {
-                        Order = new Order
-                        {
-                            User = context.Users.Any() ?
-                            context.Users.Where(u => u.Id == 1).First() :
-                            new User
-                            {
-                                FirstName = "Test",
-                                LastName = "User",
-                                //Username = "testuser1",
-                                Password = "password",
-                                StreetAdress = "Gogubbegatan 3",
-                                PostNumber = "41706",
-                                City = "Gothenburg",
-                                Country = "Sweden",
-                                Email = "test@testuser.com",
-                                Currency = "SEK",
-                                PhoneNumber = "0700000000"
-                            },
-                            PaymentOption = "Swish",
-                            TotalAmount = 11.11,
-                            DeliveryOption = "Express"
-                        },
-                        Product = new Product
-                        {
-                            Name = "airJordans",
-                            Price = 100,
-                            Image = ReadFile("Images/airJordans.jpg"),
-                            Description = "Fly high like Michael",
-                            Category = "sport",
-                            CreatedAt = DateTime.Today
-                        },
+                        Order = order,
+                        Product = product,
                         Quantity = 1
-                    },
-                    new OrderItem
-                    {
-                        Order = new Order
-                        {
-                            User = context.Users.Any() ?
-                            context.Users.Where(u => u.Id == 1).First() :
-                            new User
-                            {
-                                FirstName = "Test",
-                                LastName = "User",
-                                //Username = "testuser1",
-                                Password = "password",
-                                StreetAdress = "Gogubbegatan 3",
-                                PostNumber = "41706",
-                                City = "Gothenburg",
-                                Country = "Sweden",
-                                Email = "test@testuser.com",
-                                Currency = "SEK",
-                                PhoneNumber = "0700000000"
-                            },
-                            PaymentOption = "Swish",
-                            TotalAmount = 11.11,
-                            DeliveryOption = "Express"
-                        },
-                        Product = new Product
-                        {
-                            Name = "Nike Mercurial Vapor",
-                            Price = 100,
-                            Image = ReadFile("Images/NikeMercurialVapor.jpg"),
-                            Description = "Play Ball like Messi",
-                            Category = "sport",
-                            CreatedAt = DateTime.Today
-                        },
-                        Quantity = 2
-                    },
-                    new OrderItem
-                    {
-                        Order = new Order
-                        {
-                            User = context.Users.Any() ?
-                            context.Users.Where(u => u.Id == 1).First() :
-                            new User
-                            {
-                                FirstName = "Test",
-                                LastName = "User",
-                                //Username = "testuser1",
-                                Password = "password",
-                                StreetAdress = "Gogubbegatan 3",
-                                PostNumber = "41706",
-                                City = "Gothenburg",
-                                Country = "Sweden",
-                                Email = "test@testuser.com",
-                                Currency = "SEK",
-                                PhoneNumber = "0700000000"
-                            },
-                            PaymentOption = "Swish",
-                            TotalAmount = 11.11,
-                            DeliveryOption = "Express"
-                        },
-                       Product = new Product
-                        {
-                            Name = "airJordans",
-                            Price = 100,
-                            Image = ReadFile("Images/airJordans.jpg"),
-                            Description = "Fly high like Michael",
-                            Category = "sport",
-                            CreatedAt = DateTime.Today
-                        },
-                        Quantity = 3
                     });
-                }
-                if(!context.Currencies.Any())
+            });
+            context.OrderItems.AddRange(orderItems);
+
+            var currencyRates = CurrencyManager.GetCurrencyRates().Result;
+            foreach (KeyValuePair<string, double> item in  currencyRates.Rates)
+            {
+                context.Currencies.Add(new Currency
                 {
-                    var currencyRates = CurrencyManager.GetCurrencyRates().Result;
-                    foreach (KeyValuePair<string, double> item in  currencyRates.Rates)
-                    {
-                        context.Currencies.Add(new Currency
-                        {
-                            CurrencyCode = item.Key,
-                            CurrencyRate = item.Value
-                        });
-                    }
-                }
-                context.SaveChanges();
+                    CurrencyCode = item.Key,
+                    CurrencyRate = item.Value,
+                    LastUpdated = currencyRates.Date
+                });
             }
+            context.SaveChanges();
+            context.Dispose();
         }
     }
 }
