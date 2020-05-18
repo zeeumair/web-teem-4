@@ -29,8 +29,6 @@ namespace Webshop.Controllers
         private string recipient;
         private string subject;
         private string body;
-        private string orderId;
-        //private IEnumerable<string> orderItems;
         private User currentUser;
         private Order order;
         private List<OrderItem> orderItems;
