@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,12 +16,22 @@ namespace Webshop.Controllers
     {
         private User userToUpdate;
         private User user;
+        private Microsoft.AspNetCore.Identity.SignInResult result;
+        private User currentUser;
+        private IQueryable<OrderItem> orderHistory;
+        private string token;
+        private string passwordResetLink;
+        private string to;
+        private string subject;
+        private string body;
 
         private UserManager<User> UserMgr { get; }
 
         private SignInManager<User> SignInMgr { get; }
 
         private IdentityAppContext _context { get; set; }
+        public Task<bool> IsKeyCustomer { get; private set; }
+        public double DiscountedPrice { get; private set; }
 
         private Task<User> GetCurrentUserAsync() => UserMgr.GetUserAsync(HttpContext.User);
 
@@ -41,6 +52,8 @@ namespace Webshop.Controllers
 
             return View(user); 
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,26 +77,54 @@ namespace Webshop.Controllers
 
             return View(userToUpdate);
         }
-        
+
         public async Task<IActionResult> Logout()
         {
             await SignInMgr.SignOutAsync();
             return RedirectToAction("Index", "Products"); 
         }
 
+        public async Task<User> ChangeToKeyCustomer(User currentUser)
+        {
+
+             orderHistory = _context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
+
+            if (orderHistory.Count() > 2)
+            {
+                await UserMgr.AddToRoleAsync(currentUser, "KeyCustomer");
+            }
+
+            return currentUser; 
+        }
+
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(User model, string totalPrice)
         {
-            var result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
-
+            result = await SignInMgr.PasswordSignInAsync(model.Email, model.Password, false, false);
 
             if (result.Succeeded && totalPrice != null)
             {
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency});
+               currentUser = await UserMgr.FindByEmailAsync(model.Email);
+
+               await ChangeToKeyCustomer(currentUser); 
+
+               IsKeyCustomer = UserMgr.IsInRoleAsync(currentUser, "KeyCustomer");
+               DiscountedPrice = Convert.ToDouble(totalPrice);
+
+                if (IsKeyCustomer.Result == true)
+                {
+                    DiscountedPrice = DiscountedPrice * 0.9;
+                    
+                    return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = DiscountedPrice.ToString(), keyCustomer = IsKeyCustomer.Result });
+                }
+
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, keyCustomer = IsKeyCustomer.Result });
+
             }
             if (result.Succeeded)
             {
@@ -97,6 +138,70 @@ namespace Webshop.Controllers
             return View(model);
         }
 
+        public IActionResult GoogleLogin()
+        {
+            var properties = SignInMgr.ConfigureExternalAuthenticationProperties("Google", Url.Action("GoogleLoginCallback", "UserWithAuthentication"));
+            return new ChallengeResult("Google", properties);
+        }
+
+        public async Task<IActionResult> GoogleLoginCallback(string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, $"Invalid Login Attempt: {remoteError}");
+                return RedirectToAction("Login");
+            }
+            
+            var info = await SignInMgr.GetExternalLoginInfoAsync();
+            
+            if (info == null)
+            {
+                ModelState.AddModelError(string.Empty, "Error loading external login information.");
+                return RedirectToAction("Login");
+            }
+
+            var googleEmail = info.Principal.FindFirstValue(ClaimTypes.Email);
+            
+            if (String.IsNullOrEmpty(googleEmail))
+            {
+                ModelState.AddModelError(string.Empty, "Could not find an email associated with your google account. Make sure your Google account has a registered email address.");
+                return RedirectToAction("Login");
+            }
+
+            var matchingUser = _context.Users.Where(u => u.Email == googleEmail).FirstOrDefault();
+
+            if (matchingUser != null && !_context.UserLogins.Where(u => u.UserId == matchingUser.Id).Any())
+            {
+                ModelState.AddModelError(string.Empty, "An account with that email address already exists.");
+                return RedirectToAction("Login");
+            }
+
+            var result = await SignInMgr.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Products");
+
+            var user = new User
+            {
+                Email = googleEmail,
+                UserName = googleEmail,
+                FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName),
+                LastName = info.Principal.FindFirstValue(ClaimTypes.Surname),
+                StreetAdress = info.Principal.FindFirstValue(ClaimTypes.StreetAddress),
+                PostNumber = info.Principal.FindFirstValue(ClaimTypes.PostalCode),
+                City = info.Principal.FindFirstValue(ClaimTypes.Locality),
+                Country = info.Principal.FindFirstValue(ClaimTypes.Country),
+                Currency = "SEK",
+                PhoneNumber = info.Principal.FindFirstValue(ClaimTypes.MobilePhone),
+                Password = null,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            await UserMgr.CreateAsync(user);
+            await UserMgr.AddLoginAsync(user, info);
+            await SignInMgr.SignInAsync(user, false);
+
+            return RedirectToAction("Index", "Products");
+        }
 
         public IActionResult Register()
         {
@@ -117,15 +222,18 @@ namespace Webshop.Controllers
                 PostNumber = model.PostNumber,
                 CreatedAt = DateTime.Now,
                 PhoneNumber = model.PhoneNumber,
-                Currency = model.Currency
+                Currency = model.Currency,
+                Country = model.Country
             };
+            
             var result = await UserMgr.CreateAsync(user, model.Password);
+
 
             if (result.Succeeded && totalPrice != null)
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);
 
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, userEmail = model.Email, currency = model.Currency });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
             }
             if (result.Succeeded)
             {
@@ -157,11 +265,11 @@ namespace Webshop.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserMgr.FindByEmailAsync(model.Email);
+
                 if (user != null)
                 {
-                    var token = await UserMgr.GeneratePasswordResetTokenAsync(user);
-
-                    var passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
+                     token = await UserMgr.GeneratePasswordResetTokenAsync(user);
+                     passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
                         new { token = token , email = model.Email}, Request.Scheme);
 
                     SendResetPasswordLink(passwordResetLink, model.Email);
@@ -177,12 +285,9 @@ namespace Webshop.Controllers
 
         public IActionResult SendResetPasswordLink(string resetPasswordLink, string email)
         {
-
-
-
-            string to = email;
-            string subject = "Reset Password";
-            string body = $"Please click the link to reset your password {resetPasswordLink}";
+            to = email;
+            subject = "Reset Password";
+            body = $"Please click the link to reset your password {resetPasswordLink}";
             MailMessage mm = new MailMessage();
             mm.To.Add(to);
             mm.Subject = subject;

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webshop.Models;
 
 namespace Webshop.Migrations
 {
     [DbContext(typeof(IdentityAppContext))]
-    partial class WebshopContextModelSnapshot : ModelSnapshot
+    [Migration("20200508111515_RoleManager")]
+    partial class RoleManager
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,9 +167,6 @@ namespace Webshop.Migrations
 
                     b.Property<double>("CurrencyRate")
                         .HasColumnType("float");
-
-                    b.Property<DateTimeOffset>("LastUpdated")
-                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
