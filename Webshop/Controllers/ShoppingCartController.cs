@@ -13,7 +13,6 @@ namespace Webshop.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly IdentityAppContext _context;
-        private IQueryable<OrderItem> webshopContext;
         private List<string> orderItems;
         private List<OrderItem> orderItemToList;
 
@@ -78,6 +77,12 @@ namespace Webshop.Controllers
                 HttpContext.Session.SetString("cartItems", updatedCart);
             });
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> ClearShoppingCart()
+        {
+            await Task.Run( () => HttpContext.Session.SetString("cartItems", ""));
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
         [HttpPost]

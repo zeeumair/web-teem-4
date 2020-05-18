@@ -4,22 +4,14 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Login</h1>
-
 <div>
 
     @ViewBag.Result
 </div>
 
-<head>
 
-    <link rel="stylesheet" href="~/css/UserWithAuthentication/Login.css" />
+<h1>Login</h1>
 
-</head>
-
-<h1>Register</h1>
-
-<h4>User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -40,9 +32,15 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-primary" />
+                <input type="submit" value="Login" class="btn btn-dark" />
             </div>
         </form>
+        <div>
+            <a class="btn btn-outline-dark" asp-action="GoogleLogin" asp-controller="UserWithAuthentication" role="button" style="text-transform:none">
+                <img id="google-logo" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+                Login with Google
+            </a>
+        </div>
         <div>
             <a asp-action="ForgotPassword" asp-controller="UserWithAuthentication">Forgot Password</a>
         </div>
