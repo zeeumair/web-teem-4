@@ -1,5 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,61 +11,66 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Products" asp-action="Index">Webshop</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Products" asp-action="Index">OMGZ SHOES</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav my-2 my-sm-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Shopping Cart</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Shopping Cart</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
 
-                        <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="UserWithAuthentication" asp-action="Logout">Logout</a>
+                            </li>
 
-                            @if (User.Identity.IsAuthenticated)
-                            {
+                            <li class="nav-item">
 
-                                <a asp-controller="UserWithAuthentication" asp-action="Logout">Logout</a>
-                                <a asp-controller="UserWithAuthentication" asp-action="Edit">Min Sida</a>
-
-
+                                <a class="nav-link text-white" asp-controller="UserWithAuthentication" asp-action="Edit">Min Sida</a>
+                            </li>
                         }
                         else
                         {
-                            <a asp-controller="UserWithAuthentication" asp-action="Login">Login</a>
-                            <a asp-controller="UserWithAuthentication" asp-action="Register">Register</a>
+                            <li class="nav-item">
+
+                                <a class="nav-link text-white" asp-controller="UserWithAuthentication" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+
+                                <a class="nav-link text-white" asp-controller="UserWithAuthentication" asp-action="Register">Register</a>
+                            </li>
 
                         }
 
 
-                            </li>
-
-                            @{ if (ViewBag.HideCurrencyConversion == null)
-                                {
-                                    <li class="scrollableCollapse">
-                                        <a class="btn btn-secondary" role="button" data-toggle="collapse" href="#currencyListContainer">
-                                            @{
-                                                if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
-                                                {
-                                                    <h6 id="currentCurrency">Currency: SEK</h6>
-                                                }
-                                                else
-                                                {
-                                                    <h6 id="currentCurrency">Currency: @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</h6>
-                                                }
+                        @{ if (ViewBag.HideCurrencyConversion == null)
+                            {
+                                <li class="scrollableCollapse nav-item">
+                                    <a class="nav-link text-white" role="button" data-toggle="collapse" href="#currencyListContainer">
+                                        @{
+                                            if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("currencyCode")))
+                                            {
+                                                <p id="currentCurrency">Currency: SEK</p>
                                             }
-                                        </a>
-                                        <div id="currencyListContainer" class="collapse">
-                                            <ul id="currencyList" class="list-group">
-                                            </ul>
-                                        </div>
-                                    </li>
-                                }
+                                            else
+                                            {
+                                                <p id="currentCurrency">Currency: @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</p>
+                                            }
+                                        }
+                                    </a>
+                                    <div id="currencyListContainer" class="collapse">
+                                        <ul id="currencyList" class="list-group">
+                                        </ul>
+                                    </div>
+                                </li>
                             }
+                        }
 
                         </ul>
                 </div>
@@ -76,14 +83,20 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - Webshop
-        </div>
+    <footer id="footer" class="fixed-bottom">
+        <a id="footer_text" class="navbar-brand"> &copy; 2020 - OMGZ Shoes</a>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
+
+
+
+
 </body>
+
+
 </html>
+

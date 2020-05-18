@@ -29,8 +29,6 @@ namespace Webshop.Controllers
         private string recipient;
         private string subject;
         private string body;
-        private string orderId;
-        //private IEnumerable<string> orderItems;
         private User currentUser;
         private Order order;
         private List<OrderItem> orderItems;
@@ -171,7 +169,7 @@ namespace Webshop.Controllers
                 email = inputEmail ?? item.Order.User.Email; 
             }
 
-            purchaseConfirmation = purchaseConfirmation + $"for the amount of ${CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))}) via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+            purchaseConfirmation = purchaseConfirmation + $"for the amount of {CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))} {HttpContext.Session.GetString("currencyCode")} via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
 
             recipient = email;
             subject = "Order Confirmation";

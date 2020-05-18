@@ -12,5 +12,7 @@ namespace Webshop.Models
         public string CurrencyCode { get; set; }
 
         public double CurrencyRate { get; set; }
+
+        public DateTimeOffset LastUpdated { get; set; }
     }
 }

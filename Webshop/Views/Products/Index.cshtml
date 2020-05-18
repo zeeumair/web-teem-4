@@ -29,7 +29,12 @@
                     }
                 </h3>
                 <b>@Html.DisplayFor(modelItem => item.Category)</b>
-                <h4><i>@CurrencyManager.CalcPrice(item.Price, HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</i></h4>
+                @{ 
+                    var currencyRate = HttpContextAccessor.HttpContext.Session.GetString("currencyRate")?? "1";
+                    
+                    var currencyCode = HttpContextAccessor.HttpContext.Session.GetString("currencyCode")?? "SEK";
+                }
+                <h4><i>@CurrencyManager.CalcPrice(item.Price, currencyRate) @currencyCode</i></h4>
             </div>
             <div>
                 <a asp-action="Details" asp-route-id="@item.Id" id="@item.Id" class="btn btn-dark col-12 mb-1">Details</a>
