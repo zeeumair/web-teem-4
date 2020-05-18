@@ -6,6 +6,7 @@ function GetServiceCodes() {
     var url = 'https://atapi2.postnord.com/rest/shipment/v3/edi/servicecodes?apikey=';
     var request = new XMLHttpRequest();
     request.open('GET', url + apikey);
+    request.withCredentials = true;
     request.onload = function () {
         var data = JSON.parse(request.responseText);
         console.log(data);

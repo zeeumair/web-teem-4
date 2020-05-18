@@ -15,9 +15,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 using System.Web;
+using Microsoft.AspNetCore.Cors;
 
 namespace Webshop.Controllers
 {
+    [EnableCors("Policy")]
     public class OrderConfirmationController : Controller
     {
         private UserManager<User> UserMgr { get; }

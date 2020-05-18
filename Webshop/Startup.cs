@@ -36,9 +36,18 @@ namespace Webshop
                 options.User.RequireUniqueEmail = true;
                 
             }).AddEntityFrameworkStores<IdentityAppContext>().AddDefaultTokenProviders();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Policy",
+                    builder =>
+                    {
+                        builder.WithOrigins("https://atapi2.postnord.com")
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();
+                    });
+            });
 
 
- 
 
 
 
@@ -75,9 +84,9 @@ namespace Webshop
             app.UseAuthentication();
 
             app.UseSession();
-
+            
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
