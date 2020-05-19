@@ -52,7 +52,7 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-dark" />
+                <input type="submit" value="Save" id="saveUserInfo" class="btn btn-dark" />
             </div>
         </form>
         @Html.ActionLink("View Order History", "OrderHistory", "Orders", null, new { @id = "OrderHistoryLink", @class = "btn btn-dark" })
