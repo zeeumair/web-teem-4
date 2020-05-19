@@ -34,7 +34,7 @@
 
     <br />
 
-    <label style="font-style:italic;">Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))</label>
+    <label style="font-style:italic;">Total Price: @CurrencyManager.CalcPrice(decimal.Parse(ViewBag.totalPrice), HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")</label>
 
     <p style="color:darkblue">@ViewBag.keyCustomer</p>
 

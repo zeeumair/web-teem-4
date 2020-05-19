@@ -66,7 +66,7 @@ namespace Webshop
                 new Product
                 {
                     Name = "Air Jordans",
-                    Price = 100,
+                    Price = 199,
                     Image = ReadFile("Images/airJordans.jpg"),
                     Description = "Fly high like Michael",
                     Category = "sport",
@@ -75,21 +75,57 @@ namespace Webshop
                 new Product
                 {
                     Name = "Nike Air Zoom",
-                    Price = 100,
+                    Price = 99,
                     Image = ReadFile("Images/NikeAirZoom.jpg"),
-                    Description = "Do something like someone",
+                    Description = "Zoom like the nikon 500",
                     Category = "sport",
                     CreatedAt = DateTime.Today
                 },
                 new Product
                 {
                     Name = "Nike Mercurial Vapor",
-                    Price = 100,
+                    Price = 150,
                     Image = ReadFile("Images/NikeMercurialVapor.jpg"),
                     Description = "Play Ball like Messi",
                     Category = "sport",
                     CreatedAt = DateTime.Today
-                } 
+                },                
+                new Product
+                {
+                    Name = "Moon Boots",
+                    Price = 299,
+                    Image = ReadFile("Images/moonboot.jpg"),
+                    Description = "Perfect for netflix and fake the moon landing",
+                    Category = "Space Exploration",
+                    CreatedAt = DateTime.Today
+                },                
+                new Product
+                {
+                    Name = "Pimp shoe Fish-tank edt",
+                    Price = 100,
+                    Image = ReadFile("Images/pimpshoe.jpg"),
+                    Description = "When Paolo comes a knocking better have shoes with style",
+                    Category = "Playah",
+                    CreatedAt = DateTime.Today
+                },                
+                new Product
+                {
+                    Name = "Croc-Martens",
+                    Price = 999,
+                    Image = ReadFile("Images/croc-martens.jpg"),
+                    Description = "The perfect shoe for the casual emo",
+                    Category = "Casual",
+                    CreatedAt = DateTime.Today
+                },                
+                new Product
+                {
+                    Name = "Clown Shoes",
+                    Price = 1,
+                    Image = ReadFile("Images/clownshoes.jpg"),
+                    Description = "When Insane Clown Posse is your life, strut your stuff with these flippin clown shoes",
+                    Category = "Juggalo",
+                    CreatedAt = DateTime.Today
+                }
             };
 
             var order = new Order
