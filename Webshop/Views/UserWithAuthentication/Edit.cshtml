@@ -4,13 +4,6 @@
     ViewData["Title"] = "Edit";
 }
 
-<head>
-
-    <link rel="stylesheet" href="~/css/UserWithAuthentication/Edit.css" />
-
-</head>
-
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -59,10 +52,10 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-dark" />
             </div>
         </form>
-        @Html.ActionLink("View Order History", "OrderHistory", "Orders", null, new { id = "OrderHistoryLink" })
+        @Html.ActionLink("View Order History", "OrderHistory", "Orders", null, new { @id = "OrderHistoryLink", @class = "btn btn-dark" })
     </div>
 </div>
 

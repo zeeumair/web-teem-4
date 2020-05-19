@@ -2,12 +2,13 @@
 
 @{
     ViewData["Title"] = "Order Items History";
+    var index = -1;
 }
 
     <h1>Order History, @Html.DisplayNameFor(model => model.OrderId) : @ViewBag.OrderId</h1>
 
-<table class="table">
-    <thead>
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Product.Name)
@@ -22,15 +23,13 @@
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                Give Stars (In development)
-            </th>
-            <th>
-                Write Review (In development)
+                Review Product
             </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Product.Name)
@@ -39,6 +38,7 @@
                 @{
                     var base64 = Convert.ToBase64String(item.Product.Image);
                     var imgSrc = string.Format("data:image.jpg;base64, {0}", base64);
+                    index++;
                 }
                 <img src="@imgSrc" style="max-width: 100px; max-height:100px" />
             </td>
@@ -49,12 +49,27 @@
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                <!-- This is where the input for stars goes-->
-            </td>
-            <td>
-                <!-- This is where the input for text goes-->
+                <form asp-controller="Orders" asp-action="AddReview" method="post">
+                    <input type="hidden" name="productId" value="@item.ProductId" />
+
+                    <select id="stars" name="stars" class="btn-dark align-middle">
+                    @{
+                        var review = ViewBag.Reviews.Dequeue();
+                        for (int i = 1; i < 6; i++)
+                        {
+                            @:<option @if (review.Stars == i) {
+                                            @:selected 
+                                      } value="@i">@i</option>
+                        }
+                    }
+                    </select>
+                    <input type="text" id="description" name="description" value="@review.Description" class="align-middle" />
+                    <input type="submit" id="submitReview" value="Save Review" class="btn btn-dark align-middle mb-0" />
+                </form>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<a asp-controller="UserWithAuthentication" asp-action="Edit" id="backToMyPage" class="btn btn-dark">Back to My page</a>

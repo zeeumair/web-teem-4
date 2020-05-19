@@ -4,24 +4,21 @@
     ViewData["Title"] = "Confirmation";
 }
 
-    <head>
+<head>
 
-        <link rel="stylesheet" href="~/css/OrderConfirmation/Confirmation.css" />
+    <link rel="stylesheet" href="~/css/OrderConfirmation/Confirmation.css" />
 
-    </head>
+</head>
 
 
-<p>
-    Your confirmation number is: @Model.Select(o => o.Order.Id).FirstOrDefault()
-</p>
-<table>
-    <thead>
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
         <tr>
             <th>
-                Image
+
             </th>
             <th>
-                Name
+                Product
             </th>
             <th>
                 Price
@@ -56,13 +53,15 @@
     </tbody>
 </table>
 
-@Html.ActionLink("ShopMore", "Index", "/", null, null)
-@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = Model.FirstOrDefault().OrderId })
+<p>Confirmation number: @Model.Select(o => o.Order.Id).FirstOrDefault()</p>
 
-<h1>Totalt Betalt @CurrencyManager.CalcPrice(decimal.Parse(Model.FirstOrDefault().Order.TotalAmount.ToString()), HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode"), betalt via @ViewBag.paymentType</h1>
+<h1>Amount Payed: @CurrencyManager.CalcPrice(decimal.Parse(Model.FirstOrDefault().Order.TotalAmount.ToString()), HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode"), betalt via @Model.Select(o => o.Order.PaymentOption).FirstOrDefault()</h1>
 <p>
     Your order will be delivered to you within: @Model.Select(o => o.Order.DeliveryOption).FirstOrDefault().
 </p>
 <p>
-    This confirmation has also been sent to your email! 
+    This confirmation has also been sent to your email!
 </p>
+
+@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = Model.FirstOrDefault().OrderId }, new { @class = "btn btn-dark" })
+@Html.ActionLink("Shop more!", "Index", "/", null, new { @class = "btn btn-dark" })

@@ -6,9 +6,12 @@
 
 <h1>Order History</h1>
 
-<table class="table">
-    <thead>
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.PaymentOption)
             </th>
@@ -18,18 +21,16 @@
             <th>
                 @Html.DisplayNameFor(model => model.DeliveryOption)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Confirmed)
-            </th>
+
             <th>Items</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PaymentOption)
             </td>
@@ -40,13 +41,7 @@
                 @Html.DisplayFor(modelItem => item.DeliveryOption)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Confirmed)
-            </td>
-            <td>
-                @Html.ActionLink("View items", "OrderItemsHistory", "Orders", new { id = item.Id }, null)
+                @Html.ActionLink("View items", "OrderItemsHistory", "Orders", new { id = item.Id }, new { @class = "btn btn-dark" })
             </td>
         </tr>
 }

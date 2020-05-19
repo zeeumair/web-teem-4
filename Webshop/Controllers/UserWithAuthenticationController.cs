@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -137,6 +138,70 @@ namespace Webshop.Controllers
             return View(model);
         }
 
+        public IActionResult GoogleLogin()
+        {
+            var properties = SignInMgr.ConfigureExternalAuthenticationProperties("Google", Url.Action("GoogleLoginCallback", "UserWithAuthentication"));
+            return new ChallengeResult("Google", properties);
+        }
+
+        public async Task<IActionResult> GoogleLoginCallback(string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, $"Invalid Login Attempt: {remoteError}");
+                return RedirectToAction("Login");
+            }
+            
+            var info = await SignInMgr.GetExternalLoginInfoAsync();
+            
+            if (info == null)
+            {
+                ModelState.AddModelError(string.Empty, "Error loading external login information.");
+                return RedirectToAction("Login");
+            }
+
+            var googleEmail = info.Principal.FindFirstValue(ClaimTypes.Email);
+            
+            if (String.IsNullOrEmpty(googleEmail))
+            {
+                ModelState.AddModelError(string.Empty, "Could not find an email associated with your google account. Make sure your Google account has a registered email address.");
+                return RedirectToAction("Login");
+            }
+
+            var matchingUser = _context.Users.Where(u => u.Email == googleEmail).FirstOrDefault();
+
+            if (matchingUser != null && !_context.UserLogins.Where(u => u.UserId == matchingUser.Id).Any())
+            {
+                ModelState.AddModelError(string.Empty, "An account with that email address already exists.");
+                return RedirectToAction("Login");
+            }
+
+            var result = await SignInMgr.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Products");
+
+            var user = new User
+            {
+                Email = googleEmail,
+                UserName = googleEmail,
+                FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName),
+                LastName = info.Principal.FindFirstValue(ClaimTypes.Surname),
+                StreetAdress = info.Principal.FindFirstValue(ClaimTypes.StreetAddress),
+                PostNumber = info.Principal.FindFirstValue(ClaimTypes.PostalCode),
+                City = info.Principal.FindFirstValue(ClaimTypes.Locality),
+                Country = info.Principal.FindFirstValue(ClaimTypes.Country),
+                Currency = "SEK",
+                PhoneNumber = info.Principal.FindFirstValue(ClaimTypes.MobilePhone),
+                Password = null,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+            await UserMgr.CreateAsync(user);
+            await UserMgr.AddLoginAsync(user, info);
+            await SignInMgr.SignInAsync(user, false);
+
+            return RedirectToAction("Index", "Products");
+        }
 
         public IActionResult Register()
         {
@@ -159,7 +224,6 @@ namespace Webshop.Controllers
                 PhoneNumber = model.PhoneNumber,
                 Currency = model.Currency,
                 Country = model.Country
-                
             };
             
             var result = await UserMgr.CreateAsync(user, model.Password);

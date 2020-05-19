@@ -37,10 +37,15 @@ namespace Webshop
                 
             }).AddEntityFrameworkStores<IdentityAppContext>().AddDefaultTokenProviders();
 
+            services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                IConfigurationSection googleAuthNSection =
+                    Configuration.GetSection("Authentication:Google");
 
- 
-
-
+                options.ClientId = googleAuthNSection["ClientId"];
+                options.ClientSecret = googleAuthNSection["ClientSecret"];
+            });
 
             services.AddDbContext<IdentityAppContext>(cfg =>
             {
