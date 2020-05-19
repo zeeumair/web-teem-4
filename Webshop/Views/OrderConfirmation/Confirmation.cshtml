@@ -43,7 +43,7 @@
                     @Html.DisplayFor(modelItem => item.Product.Name)
                 </td>
                 <td>
-                    @CurrencyManager.CalcPrice(item.Product.Price, HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
+                    @CurrencyManager.CalcPrice(item.Product.Price, HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Quantity)

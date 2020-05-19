@@ -44,7 +44,7 @@
                         </td>
                         <td class="align-middle">
                             <h2>
-                                @CurrencyManager.CalcPrice(item.Price,
+                                @CurrencyManager.CalcPrice((decimal)item.Price,
                                                 HttpContextAccessor.HttpContext.Session.GetString("currencyRate"))
                                 @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
                             </h2>

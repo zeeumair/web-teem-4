@@ -35,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.PaymentOption)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TotalAmount)
+                @CurrencyManager.CalcPrice((decimal)item.TotalAmount, HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DeliveryOption)
