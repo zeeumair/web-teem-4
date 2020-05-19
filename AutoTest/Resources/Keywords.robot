@@ -98,7 +98,7 @@ Verify Log in with valid E-mail
 
 Check Min Sida after succsess Log in
     Click Link                  xpath:/html/body/header/nav/div/div/ul/li[3]/a
-    Execute Javascript              window.scrollBy(0,400)
+    Execute Javascript          window.scrollBy(0,400)
     Click Button                xpath://*[@id="saveUserInfo"]
 
 Verify Check Min Sida contains correct registeration's input for this User
