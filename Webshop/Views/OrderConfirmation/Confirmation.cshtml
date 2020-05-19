@@ -63,5 +63,5 @@
     This confirmation has also been sent to your email!
 </p>
 
-@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = Model.FirstOrDefault().OrderId })
-@Html.ActionLink("ShopMore", "Index", "/", null, null)
+@Html.ActionLink("Download as PDF", "DownloadConfirmationPdf", "OrderConfirmation", new { orderId = Model.FirstOrDefault().OrderId }, new { @class = "btn btn-dark" })
+@Html.ActionLink("Shop more!", "Index", "/", null, new { @class = "btn btn-dark" })

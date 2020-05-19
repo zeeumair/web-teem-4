@@ -4,9 +4,6 @@
     ViewData["Title"] = "Edit";
 }
 
-
-
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -58,7 +55,7 @@
                 <input type="submit" value="Save" class="btn btn-dark" />
             </div>
         </form>
-        @Html.ActionLink("View Order History", "OrderHistory", "Orders", null, new { id = "OrderHistoryLink" })
+        @Html.ActionLink("View Order History", "OrderHistory", "Orders", null, new { @id = "OrderHistoryLink", @class = "btn btn-dark" })
     </div>
 </div>
 
