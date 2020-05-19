@@ -90,9 +90,11 @@
             </tfoot>
         </table>
         <Span class="float-right mr-2">
+            @Html.ActionLink("Clear Cart", "ClearShoppingCart", "ShoppingCart", null, new { @id = "clearButton", @class = $"btn btn-danger {(String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("cartItems")) ? "disabled" : "")}" })
             @{
-                string classNames = @Model.Count() <= 0 ? "disabled" : "";
+                string classNames;
+                classNames = @Model.Count() <= 0 ? "btn btn-dark disabled" : "btn btn-success";
             }
-            @Html.ActionLink("Confirm Order", "LoginOrRegister", "OrderConfirmation", new { totalprice = sum.ToString() }, new { @class = $"btn btn-dark {classNames}" })
+            @Html.ActionLink("Confirm Order", "LoginOrRegister", "OrderConfirmation", new { totalprice = sum.ToString() }, new { @class = $"{classNames}" })
         </Span>
     </div>
