@@ -13,34 +13,32 @@ Load page
 
 Verify start page loaded
     ${link_text} = 		        Get Text  xpath:/html/body/header/nav/div/a
-    Should Be Equal		        ${link_text}  Webshop
+    Should Be Equal		        ${link_text}  OMGZ SHOES
 
 Switch to Shopping Cart
      Go to Web Page
-     Click Link                 xpath:/html/body/div/main/table/tbody/tr/td[6]/a[2]
+     Click Link                 xpath://*[@id="AddToShoppingCart"]
      Click Link                 xpath:/html/body/header/nav/div/div/ul/li[1]/a
      Wait Until Page Contains   Total cost:
 
 Verify Shopping Cart Loaded
-    ${link_text} = 		         Get Text  xpath:/html/body/div/main/span/a[2]
+    ${link_text} = 		         Get Text  xpath:/html/body/div/main/div/span/a
     Should Be Equal		         ${link_text}  Confirm Order
 
 Verify adding products
-    Click Button                 xpath:/html/body/div/main/table/tbody/tr/td[2]/div/div[1]/form/input[2]
-    ${link_text} = 		         Get Text  xpath:/html/body/div/main/table/thead/tr/th[2]
+    Click Button                 xpath:/html/body/div/main/div/table/tbody/tr/td[3]/div/div[1]/form/input[2]
+    ${link_text} = 		         Get Text  xpath:/html/body/div/main/div/table/thead/tr/th[3]
     Should Be Equal		         ${link_text}  Quantity
 
 Verify removing products
-    Click Button                xpath:/html/body/div/main/table/tbody/tr/td[2]/div/div[2]/form/input[2]
-    ${link_text} = 		         Get Text  xpath:/html/body/div/main/table/thead/tr/th[3]
+    Click Button                xpath:/html/body/div/main/div/table/tbody/tr/td[3]/div/div[2]/form/input[2]
+    ${link_text} = 		         Get Text  xpath:/html/body/div/main/div/table/thead/tr/th[4]
     Should Be Equal		         ${link_text}  Price
 
 Verify Back Tab Is Clickable
     Click Element               xpath:/html/body/div/main/a
     ${link_text} =              Get Text  xpath:/html/body/header/nav/div/a
-    Should Be Equal             ${link_text}  Webshop
+    Should Be Equal             ${link_text}  OMGZ SHOES
 
 End Web Test
     Close Browser
-
-
