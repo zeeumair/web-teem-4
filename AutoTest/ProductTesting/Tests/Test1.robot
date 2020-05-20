@@ -1,6 +1,6 @@
 *** Settings ***
 
-Documentation                   This is some basic info about the whole Webshop test suite
+Documentation                   This is some basic info about the whole OMGZ SHOES test suite
 Resource                        ../Resources/Keywords.robot
 Library                         SeleniumLibrary
 Library                         DateTime
@@ -16,8 +16,8 @@ ${URL} =                        https://localhost:44304/
 *** Test Cases ***
 
 User can access Webshop site
-    [Documentation]             Test: User should be able to access the Webshop main page
-    [Tags]                      Access Webshop
+    [Documentation]             Test: User should be able to access the OMGZ SHOES main page
+    [Tags]                      Access OMGZ SHOES
 
         Go to Web Page
 
