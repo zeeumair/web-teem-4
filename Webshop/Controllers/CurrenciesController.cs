@@ -41,7 +41,7 @@ namespace Webshop.Controllers
                         if(item.Key == currency.CurrencyCode)
                         {
                             currency.CurrencyRate = item.Value;
-                            currency.LastUpdated = currencyRates.Date;
+                            currency.LastUpdated = DateTimeOffset.UtcNow;
                         }   
                     }
                 });

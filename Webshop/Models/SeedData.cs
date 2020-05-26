@@ -155,7 +155,7 @@ namespace Webshop
                 {
                     CurrencyCode = item.Key,
                     CurrencyRate = item.Value,
-                    LastUpdated = currencyRates.Date
+                    LastUpdated = DateTimeOffset.UtcNow
                 });
             }
             context.SaveChanges();
