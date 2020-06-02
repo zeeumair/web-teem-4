@@ -79,12 +79,25 @@ namespace Webshop.Controllers
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
              currentUser = await GetCurrentUserAsync();
+            double paymentDeliveryOptTotal = 0;
+            switch (deliveryTime)
+            {
+                case "2-5 days":
+                    paymentDeliveryOptTotal = 60;
+                    break;
+                case "5-10 days":
+                    paymentDeliveryOptTotal = 40;
+                    break;
+                case "30 days":
+                    paymentDeliveryOptTotal = 20;
+                    break;
+            }
 
              order = new Order
             {
                 User = await _context.Users.FindAsync(currentUser.Id),
                 PaymentOption = paymentType,
-                TotalAmount = double.Parse(totalPrice),
+                TotalAmount = (double.Parse(totalPrice) + paymentDeliveryOptTotal),
                 DeliveryOption = deliveryTime,
                 Confirmed = true
             };
