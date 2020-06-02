@@ -8,6 +8,7 @@
     <title>@ViewData["Title"] - Webshop</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/js/search.js"></script>
 </head>
 <body>
     <header>
@@ -51,6 +52,10 @@
 
                         @{ if (ViewBag.HideCurrencyConversion == null)
                             {
+                                <li class="nav-item">
+                                    <input class="form-control" id="searchbar" type="text" placeholder="Search" aria-label="Search">
+                                </li>
+                                <li class="nav-link text-white btn-dark" id="searchbutton" onclick="search()">Search</li>
                                 <li class="scrollableCollapse nav-item">
                                     <a class="nav-link text-white" role="button" data-toggle="collapse" href="#currencyListContainer">
                                         @{

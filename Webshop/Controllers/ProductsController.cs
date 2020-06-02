@@ -19,10 +19,19 @@ namespace Webshop.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search = null)
         {
+            var products = from c in _context.Products
+                           select c;
+
+            if(!String.IsNullOrEmpty(search))
+            {
+                products = products.Where(x => x.Name.Contains(search) || x.Description.Contains(search) || x.Category.Contains(search));
+            }
+
+            await products.ToListAsync();
+
             Queue<double> averageStars = new Queue<double>();
-            var products = await _context.Products.ToListAsync();
             foreach (var product in products)
             {
                 var reviews = await _context.Reviews.Where(x => x.ProductId == product.Id).ToListAsync();
