@@ -92,7 +92,8 @@ namespace Webshop.Controllers
                     paymentDeliveryOptTotal = 20;
                     break;
             }
-
+            if (paymentType == "Invoice")
+                paymentDeliveryOptTotal += 50;
              order = new Order
             {
                 User = await _context.Users.FindAsync(currentUser.Id),

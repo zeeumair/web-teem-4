@@ -15,15 +15,15 @@
             var code = HttpContextAccessor.HttpContext.Session.GetString("currencyCode");
         }
         <select id="paymentType" name="paymentType" class="btn-dark" style="width:20%;">
-            <option value="Swish">Swish</option>
-            <option value="Invoice">Invoice</option>
+            <option value="Swish">Swish (0 @code)</option>
+            <option value="Invoice">Invoice (@CurrencyManager.CalcPrice(50, rate) @code)</option>
         </select>
         <br />
 
         <label>Delivery Time</label>
         <br />
 
-        <select id="deliveryTime" name="deliveryTime" class="btn-dark" style="width:20%;" onchange="">
+        <select id="deliveryTime" name="deliveryTime" class="btn-dark" style="width:20%;">
             <option value="2-5 days">2-5 Days (@CurrencyManager.CalcPrice(60, rate) @code)</option>
             <option value="5-10 days">5-10 Days (@CurrencyManager.CalcPrice(40, rate) @code)</option>
             <option value="30 days">30 Days (@CurrencyManager.CalcPrice(20, rate) @code)</option>
