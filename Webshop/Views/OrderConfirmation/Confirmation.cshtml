@@ -54,7 +54,7 @@
 </table>
 
 <p>Confirmation number: @Model.Select(o => o.Order.Id).FirstOrDefault()</p>
-
+<p style="color:darkblue">@ViewBag.keyCustomer</p>
 <h1>Amount Payed: @CurrencyManager.CalcPrice(decimal.Parse(Model.FirstOrDefault().Order.TotalAmount.ToString()), HttpContextAccessor.HttpContext.Session.GetString("currencyRate")) @HttpContextAccessor.HttpContext.Session.GetString("currencyCode"), betalt via @Model.Select(o => o.Order.PaymentOption).FirstOrDefault()</h1>
 <p>
     Your order will be delivered to you within: @Model.Select(o => o.Order.DeliveryOption).FirstOrDefault().

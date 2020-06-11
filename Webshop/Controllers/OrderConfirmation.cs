@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 using System.Web;
+using System.Security.Claims;
 
 namespace Webshop.Controllers
 {
@@ -29,7 +30,6 @@ namespace Webshop.Controllers
         private string recipient;
         private string subject;
         private string body;
-        private User currentUser;
         private Order order;
         private List<OrderItem> orderItems;
         private string cartItems;
@@ -49,17 +49,11 @@ namespace Webshop.Controllers
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        public IActionResult SelectPaymentAndDeliveryOption(string totalprice, bool keyCustomer)
+        public IActionResult SelectPaymentAndDeliveryOption(string totalprice)
         {
+            ViewBag.totalPrice = totalprice;
             if (String.IsNullOrEmpty(HttpContext.Session.GetString("cartItems")))
                 return RedirectToAction("index", "Products");
-
-            if (keyCustomer)
-            {
-                ViewBag.keyCustomer = "You recived a 10% discount since you have been a loyal customer"; 
-            }
-
-            ViewBag.totalPrice = totalprice;
 
             return View();
         }
@@ -78,27 +72,35 @@ namespace Webshop.Controllers
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult> Confirmation(string totalPrice, string paymentType, string deliveryTime, string email)
         {
-             currentUser = await GetCurrentUserAsync();
-            double paymentDeliveryOptTotal = 0;
+            var sumTotalPrice = double.Parse(totalPrice);
+            var currentUser = await GetCurrentUserAsync();
+            var userOrders = await _context.Orders.Where(x => x.User.Id == currentUser.Id).ToListAsync();
+            if (!HttpContext.User.IsInRole("KeyCustomer") && userOrders.Count() > 2)
+                await UserMgr.AddToRoleAsync(currentUser, "KeyCustomer");
             switch (deliveryTime)
             {
                 case "2-5 days":
-                    paymentDeliveryOptTotal = 60;
+                    sumTotalPrice += 60;
                     break;
                 case "5-10 days":
-                    paymentDeliveryOptTotal = 40;
+                    sumTotalPrice += 40;
                     break;
                 case "30 days":
-                    paymentDeliveryOptTotal = 20;
+                    sumTotalPrice += 20;
                     break;
             }
             if (paymentType == "Invoice")
-                paymentDeliveryOptTotal += 50;
-             order = new Order
+                sumTotalPrice += 50;
+            if (await UserMgr.IsInRoleAsync(currentUser, "KeyCustomer"))
+            {
+                sumTotalPrice *= 0.9;
+                ViewBag.keyCustomer = "You recived a 10% discount since you have been a loyal customer";
+            }
+            order = new Order
             {
                 User = await _context.Users.FindAsync(currentUser.Id),
                 PaymentOption = paymentType,
-                TotalAmount = (double.Parse(totalPrice) + paymentDeliveryOptTotal),
+                TotalAmount = sumTotalPrice,
                 DeliveryOption = deliveryTime,
                 Confirmed = true
             };
@@ -124,7 +126,7 @@ namespace Webshop.Controllers
 
             ReciveConfirmationViaEmail(orderItems, email);
 
-            ViewBag.totalPrice = totalPrice;
+            ViewBag.totalPrice = sumTotalPrice.ToString();
             ViewBag.paymentType = paymentType;
             ViewBag.delivery = deliveryTime;
             ViewBag.orderId = order.Id;
@@ -175,7 +177,7 @@ namespace Webshop.Controllers
 
             foreach (var item in orderItemsList)
             {
-                purchaseConfirmation = purchaseConfirmation + $"{item.Quantity} of {item.Product.Name}, ";
+                purchaseConfirmation += $"{item.Quantity} of {item.Product.Name}, ";
                 totalAmount = item.Order.TotalAmount;
                 paymentOption = item.Order.PaymentOption;
                 deliveryOption = item.Order.DeliveryOption;
@@ -183,7 +185,7 @@ namespace Webshop.Controllers
                 email = inputEmail ?? item.Order.User.Email; 
             }
 
-            purchaseConfirmation = purchaseConfirmation + $"for the amount of {CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))} {HttpContext.Session.GetString("currencyCode")} via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
+            purchaseConfirmation += $"for the amount of {CurrencyManager.CalcPrice((decimal)totalAmount, HttpContext.Session.GetString("currencyRate"))} {HttpContext.Session.GetString("currencyCode")} via { paymentOption}. Your delivery will arrive in { deliveryOption} days";
 
             recipient = email;
             subject = "Order Confirmation";
@@ -194,11 +196,13 @@ namespace Webshop.Controllers
             mm.Body = body;
             mm.From = new MailAddress("omgzshoezz@gmail.com", "OMGZ Shoes");
             mm.IsBodyHtml = false;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com");
-            smtp.Port = 587;
-            smtp.UseDefaultCredentials = false;
-            smtp.EnableSsl = true;
-            smtp.Credentials = new System.Net.NetworkCredential("omgzshoezz@gmail.com", "OmgzOmgz123");
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                UseDefaultCredentials = false,
+                EnableSsl = true,
+                Credentials = new System.Net.NetworkCredential("omgzshoezz@gmail.com", "OmgzOmgz123")
+            };
             smtp.Send(mm);
         }
 

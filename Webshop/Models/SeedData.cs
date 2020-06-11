@@ -15,7 +15,7 @@ namespace Webshop
         public static byte[] ReadFile(string sPath)
         {
             //Initialize byte array with a null value initially.
-            byte[] data = null;
+            byte[] data;
 
             //Use FileInfo object to get file size.
             FileInfo fInfo = new FileInfo(sPath);
@@ -61,7 +61,8 @@ namespace Webshop
             user.PasswordHash = passwordHasher.HashPassword(user, "!1Aaaa");
             var manager = serviceProvider.GetRequiredService<UserManager<User>>();
             manager.CreateAsync(user).Wait();
-            
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
+            var result = roleManager.CreateAsync(new AppRole { Name = "KeyCustomer", NormalizedName = "KEYCUSTOMER", RoleName = "KeyCustomer" }).Result;
             var products = new List<Product> { 
                 new Product
                 {

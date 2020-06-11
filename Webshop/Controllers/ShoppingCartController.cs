@@ -52,7 +52,7 @@ namespace Webshop.Controllers
 
         }
 
-        public async Task<IActionResult> AddProductToCart(int id, string userEmail)
+        public async Task<IActionResult> AddProductToCart(int id)
         {
             await Task.Run(() =>
             {

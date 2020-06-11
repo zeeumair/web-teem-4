@@ -29,7 +29,7 @@ namespace Webshop.Controllers
 
         private SignInManager<User> SignInMgr { get; }
 
-        private IdentityAppContext _context { get; set; }
+        private IdentityAppContext Context { get; set; }
         public Task<bool> IsKeyCustomer { get; private set; }
         public double DiscountedPrice { get; private set; }
 
@@ -42,7 +42,7 @@ namespace Webshop.Controllers
         {
             UserMgr = userManager;
             SignInMgr = signInManager;
-            _context = identityAppContext; 
+            Context = identityAppContext; 
 
         }
 
@@ -87,7 +87,7 @@ namespace Webshop.Controllers
         public async Task<User> ChangeToKeyCustomer(User currentUser)
         {
 
-             orderHistory = _context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
+             orderHistory = Context.OrderItems.Include(o => o.Order).Include(ou => ou.Order.User).Where(ou => ou.Order.User == currentUser && ou.Order.Confirmed == true);
 
             if (orderHistory.Count() > 2)
             {
@@ -118,12 +118,12 @@ namespace Webshop.Controllers
 
                 if (IsKeyCustomer.Result == true)
                 {
-                    DiscountedPrice = DiscountedPrice * 0.9;
+                    DiscountedPrice *= 0.9;
                     
                     return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = DiscountedPrice.ToString(), keyCustomer = IsKeyCustomer.Result });
                 }
 
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice, keyCustomer = IsKeyCustomer.Result });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice, keyCustomer = IsKeyCustomer.Result });
 
             }
             if (result.Succeeded)
@@ -168,9 +168,9 @@ namespace Webshop.Controllers
                 return RedirectToAction("Login");
             }
 
-            var matchingUser = _context.Users.Where(u => u.Email == googleEmail).FirstOrDefault();
+            var matchingUser = Context.Users.Where(u => u.Email == googleEmail).FirstOrDefault();
 
-            if (matchingUser != null && !_context.UserLogins.Where(u => u.UserId == matchingUser.Id).Any())
+            if (matchingUser != null && !Context.UserLogins.Where(u => u.UserId == matchingUser.Id).Any())
             {
                 ModelState.AddModelError(string.Empty, "An account with that email address already exists.");
                 return RedirectToAction("Login");
@@ -233,7 +233,7 @@ namespace Webshop.Controllers
             {
                 await SignInMgr.SignInAsync(user, isPersistent: false);
 
-                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice = totalPrice });
+                return RedirectToAction("SelectPaymentAndDeliveryOption", "OrderConfirmation", new { totalPrice });
             }
             if (result.Succeeded)
             {
@@ -270,7 +270,7 @@ namespace Webshop.Controllers
                 {
                      token = await UserMgr.GeneratePasswordResetTokenAsync(user);
                      passwordResetLink = Url.Action("ResetPassword", "UserWithAuthentication",
-                        new { token = token , email = model.Email}, Request.Scheme);
+                        new { token, email = model.Email}, Request.Scheme);
 
                     SendResetPasswordLink(passwordResetLink, model.Email);
 
@@ -294,11 +294,13 @@ namespace Webshop.Controllers
             mm.Body = body;
             mm.From = new MailAddress("omgzshoezz@gmail.com", "OMGZ Shoes");
             mm.IsBodyHtml = false;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com");
-            smtp.Port = 587;
-            smtp.UseDefaultCredentials = false;
-            smtp.EnableSsl = true;
-            smtp.Credentials = new System.Net.NetworkCredential("omgzshoezz@gmail.com", "OmgzOmgz123");
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                UseDefaultCredentials = false,
+                EnableSsl = true,
+                Credentials = new System.Net.NetworkCredential("omgzshoezz@gmail.com", "OmgzOmgz123")
+            };
             smtp.Send(mm);
 
             return View();

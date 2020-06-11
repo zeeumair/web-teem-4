@@ -33,12 +33,7 @@
         <label>Email Address</label>
         <br />
         <input type="email" name="email" id="email" style="width:20%;" placeholder="Optional" />
-
         <br />
-
-        <label style="font-style:italic;">Total Price: @CurrencyManager.CalcPrice((decimal.Parse(ViewBag.totalPrice)), rate) @code</label>
-
-        <p style="color:darkblue">@ViewBag.keyCustomer</p>
 
         <input type="hidden" name="totalPrice" value="@ViewBag.totalPrice" readonly />
 
